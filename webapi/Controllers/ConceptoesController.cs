@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class ConceptosController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public ConceptosController(SistemaNominaContext context)
+        public ConceptosController(SistemanominaContext context)
         {
             _context = context;
         }

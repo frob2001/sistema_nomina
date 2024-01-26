@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class BancosController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public BancosController(SistemaNominaContext context)
+        public BancosController(SistemanominaContext context)
         {
             _context = context;
         }

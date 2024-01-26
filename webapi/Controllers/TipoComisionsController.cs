@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class TipoComisionsController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public TipoComisionsController(SistemaNominaContext context)
+        public TipoComisionsController(SistemanominaContext context)
         {
             _context = context;
         }

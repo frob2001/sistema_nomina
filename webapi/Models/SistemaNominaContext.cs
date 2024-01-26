@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace webapi.Models;
 
-public partial class SistemaNominaContext : DbContext
+public partial class SistemanominaContext : DbContext
 {
-    public SistemaNominaContext()
+    public SistemanominaContext()
     {
     }
 
-    public SistemaNominaContext(DbContextOptions<SistemaNominaContext> options)
+    public SistemanominaContext(DbContextOptions<SistemanominaContext> options)
         : base(options)
     {
     }
@@ -53,13 +53,13 @@ public partial class SistemaNominaContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=FELICOMPU;Database=SistemaNomina;Trusted_Connection=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=tcp:sistemanomina.database.windows.net,1433;Initial Catalog=sistemanomina;Persist Security Info=False;User ID=sistemanomina;Password=nomina25sistema18!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Banco>(entity =>
         {
-            entity.HasKey(e => e.BancoId).HasName("PK__Banco__4A8BAFF5A165D8E4");
+            entity.HasKey(e => e.BancoId).HasName("PK__Banco__4A8BAFF5209E4DCE");
 
             entity.ToTable("Banco");
 
@@ -68,21 +68,21 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<CentroCosto>(entity =>
         {
-            entity.HasKey(e => e.CentroCostosId).HasName("PK__CentroCo__37ACA6F97EA7B1CE");
+            entity.HasKey(e => e.CentroCostosId).HasName("PK__CentroCo__37ACA6F9E44EEE4A");
 
             entity.Property(e => e.Nombre).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Companium>(entity =>
         {
-            entity.HasKey(e => e.CompaniaId).HasName("PK__Compania__DE6CF4B3BC838D34");
+            entity.HasKey(e => e.CompaniaId).HasName("PK__Compania__DE6CF4B3004CCB44");
 
             entity.Property(e => e.Nombre).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Concepto>(entity =>
         {
-            entity.HasKey(e => e.ConceptoId).HasName("PK__Concepto__BB30F135214D9251");
+            entity.HasKey(e => e.ConceptoId).HasName("PK__Concepto__BB30F1355A33F539");
 
             entity.ToTable("Concepto");
 
@@ -91,7 +91,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<Emisor>(entity =>
         {
-            entity.HasKey(e => e.EmisorId).HasName("PK__Emisor__E03A4804C6BB211A");
+            entity.HasKey(e => e.EmisorId).HasName("PK__Emisor__E03A480477F23633");
 
             entity.ToTable("Emisor");
 
@@ -100,7 +100,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<Empleado>(entity =>
         {
-            entity.HasKey(e => e.EmpleadoId).HasName("PK__Empleado__958BE9102A0DD2DA");
+            entity.HasKey(e => e.EmpleadoId).HasName("PK__Empleado__958BE910C20B487B");
 
             entity.ToTable("Empleado");
 
@@ -129,48 +129,48 @@ public partial class SistemaNominaContext : DbContext
 
             entity.HasOne(d => d.Banco).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.BancoId)
-                .HasConstraintName("FK__Empleado__BancoI__5DCAEF64");
+                .HasConstraintName("FK__Empleado__BancoI__02FC7413");
 
             entity.HasOne(d => d.CentroCostos).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.CentroCostosId)
-                .HasConstraintName("FK__Empleado__Centro__5CD6CB2B");
+                .HasConstraintName("FK__Empleado__Centro__02084FDA");
 
             entity.HasOne(d => d.Compania).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.CompaniaId)
-                .HasConstraintName("FK__Empleado__Compan__571DF1D5");
+                .HasConstraintName("FK__Empleado__Compan__7C4F7684");
 
             entity.HasOne(d => d.FondoReserva).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.FondoReservaId)
-                .HasConstraintName("FK__Empleado__FondoR__5FB337D6");
+                .HasConstraintName("FK__Empleado__FondoR__04E4BC85");
 
             entity.HasOne(d => d.NivelSalarial).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.NivelSalarialId)
-                .HasConstraintName("FK__Empleado__NivelS__5AEE82B9");
+                .HasConstraintName("FK__Empleado__NivelS__00200768");
 
             entity.HasOne(d => d.Ocupacion).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.OcupacionId)
-                .HasConstraintName("FK__Empleado__Ocupac__59FA5E80");
+                .HasConstraintName("FK__Empleado__Ocupac__7F2BE32F");
 
             entity.HasOne(d => d.TipoComision).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.TipoComisionId)
-                .HasConstraintName("FK__Empleado__TipoCo__5BE2A6F2");
+                .HasConstraintName("FK__Empleado__TipoCo__01142BA1");
 
             entity.HasOne(d => d.TipoContrato).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.TipoContratoId)
-                .HasConstraintName("FK__Empleado__TipoCo__59063A47");
+                .HasConstraintName("FK__Empleado__TipoCo__7E37BEF6");
 
             entity.HasOne(d => d.TipoCuenta).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.TipoCuentaId)
-                .HasConstraintName("FK__Empleado__TipoCu__5EBF139D");
+                .HasConstraintName("FK__Empleado__TipoCu__03F0984C");
 
             entity.HasOne(d => d.TipoEmpleado).WithMany(p => p.Empleados)
                 .HasForeignKey(d => d.TipoEmpleadoId)
-                .HasConstraintName("FK__Empleado__TipoEm__5812160E");
+                .HasConstraintName("FK__Empleado__TipoEm__7D439ABD");
         });
 
         modelBuilder.Entity<FondoReserva>(entity =>
         {
-            entity.HasKey(e => e.FondoReservaId).HasName("PK__FondoRes__340728611ADB2312");
+            entity.HasKey(e => e.FondoReservaId).HasName("PK__FondoRes__340728619652816D");
 
             entity.ToTable("FondoReserva");
 
@@ -179,7 +179,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<MovimientosPlanilla>(entity =>
         {
-            entity.HasKey(e => e.MovimientoId).HasName("PK__Movimien__BF923C2C9704EE82");
+            entity.HasKey(e => e.MovimientoId).HasName("PK__Movimien__BF923C2C156C928A");
 
             entity.ToTable("MovimientosPlanilla");
 
@@ -189,24 +189,24 @@ public partial class SistemaNominaContext : DbContext
 
             entity.HasOne(d => d.Compania).WithMany(p => p.MovimientosPlanillas)
                 .HasForeignKey(d => d.CompaniaId)
-                .HasConstraintName("FK__Movimient__Compa__628FA481");
+                .HasConstraintName("FK__Movimient__Compa__07C12930");
 
             entity.HasOne(d => d.Concepto).WithMany(p => p.MovimientosPlanillas)
                 .HasForeignKey(d => d.ConceptoId)
-                .HasConstraintName("FK__Movimient__Conce__6477ECF3");
+                .HasConstraintName("FK__Movimient__Conce__09A971A2");
 
             entity.HasOne(d => d.Empleado).WithMany(p => p.MovimientosPlanillas)
                 .HasForeignKey(d => d.EmpleadoId)
-                .HasConstraintName("FK__Movimient__Emple__6383C8BA");
+                .HasConstraintName("FK__Movimient__Emple__08B54D69");
 
             entity.HasOne(d => d.TipoOperacion).WithMany(p => p.MovimientosPlanillas)
                 .HasForeignKey(d => d.TipoOperacionId)
-                .HasConstraintName("FK__Movimient__TipoO__656C112C");
+                .HasConstraintName("FK__Movimient__TipoO__0A9D95DB");
         });
 
         modelBuilder.Entity<NivelSalarial>(entity =>
         {
-            entity.HasKey(e => e.NivelSalarialId).HasName("PK__NivelSal__E08BBE4E962C7705");
+            entity.HasKey(e => e.NivelSalarialId).HasName("PK__NivelSal__E08BBE4EF2A7B857");
 
             entity.ToTable("NivelSalarial");
 
@@ -215,7 +215,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<Ocupacion>(entity =>
         {
-            entity.HasKey(e => e.OcupacionId).HasName("PK__Ocupacio__77075F77886F9E50");
+            entity.HasKey(e => e.OcupacionId).HasName("PK__Ocupacio__77075F772770AE7B");
 
             entity.ToTable("Ocupacion");
 
@@ -224,7 +224,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<RolPago>(entity =>
         {
-            entity.HasKey(e => e.RolPagoId).HasName("PK__RolPago__0FE6C8A57DEE8978");
+            entity.HasKey(e => e.RolPagoId).HasName("PK__RolPago__0FE6C8A5CA969477");
 
             entity.ToTable("RolPago");
 
@@ -232,16 +232,16 @@ public partial class SistemaNominaContext : DbContext
 
             entity.HasOne(d => d.Compania).WithMany(p => p.RolPagos)
                 .HasForeignKey(d => d.CompaniaId)
-                .HasConstraintName("FK__RolPago__Compani__68487DD7");
+                .HasConstraintName("FK__RolPago__Compani__0D7A0286");
 
             entity.HasOne(d => d.Usuario).WithMany(p => p.RolPagos)
                 .HasForeignKey(d => d.UsuarioId)
-                .HasConstraintName("FK__RolPago__Usuario__693CA210");
+                .HasConstraintName("FK__RolPago__Usuario__0E6E26BF");
         });
 
         modelBuilder.Entity<Sucursal>(entity =>
         {
-            entity.HasKey(e => e.SucursalId).HasName("PK__Sucursal__6CB482E18A90E0F3");
+            entity.HasKey(e => e.SucursalId).HasName("PK__Sucursal__6CB482E1E225D887");
 
             entity.ToTable("Sucursal");
 
@@ -250,7 +250,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<TipoComision>(entity =>
         {
-            entity.HasKey(e => e.TipoComisionId).HasName("PK__TipoComi__BC5F5913D4BE8592");
+            entity.HasKey(e => e.TipoComisionId).HasName("PK__TipoComi__BC5F5913331F443A");
 
             entity.ToTable("TipoComision");
 
@@ -259,7 +259,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<TipoContrato>(entity =>
         {
-            entity.HasKey(e => e.TipoContratoId).HasName("PK__TipoCont__3E0E5787F952B05C");
+            entity.HasKey(e => e.TipoContratoId).HasName("PK__TipoCont__3E0E5787AE3A1C8D");
 
             entity.ToTable("TipoContrato");
 
@@ -268,14 +268,14 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<TipoCuentum>(entity =>
         {
-            entity.HasKey(e => e.TipoCuentaId).HasName("PK__TipoCuen__B3998D148961AAF2");
+            entity.HasKey(e => e.TipoCuentaId).HasName("PK__TipoCuen__B3998D14C9BB76E5");
 
             entity.Property(e => e.Nombre).HasMaxLength(255);
         });
 
         modelBuilder.Entity<TipoEmpleado>(entity =>
         {
-            entity.HasKey(e => e.TipoEmpleadoId).HasName("PK__TipoEmpl__0636C29B4DF83AE7");
+            entity.HasKey(e => e.TipoEmpleadoId).HasName("PK__TipoEmpl__0636C29BB2648F6E");
 
             entity.ToTable("TipoEmpleado");
 
@@ -284,7 +284,7 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<TipoOperacion>(entity =>
         {
-            entity.HasKey(e => e.TipoOperacionId).HasName("PK__TipoOper__72B4938169698894");
+            entity.HasKey(e => e.TipoOperacionId).HasName("PK__TipoOper__72B49381C1E9CA96");
 
             entity.ToTable("TipoOperacion");
 
@@ -293,11 +293,11 @@ public partial class SistemaNominaContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.UsuarioId).HasName("PK__Usuario__2B3DE7B8CCD15981");
+            entity.HasKey(e => e.UsuarioId).HasName("PK__Usuario__2B3DE7B88C122D2E");
 
             entity.ToTable("Usuario");
 
-            entity.HasIndex(e => e.CorreoElectronico, "UQ__Usuario__531402F30AA9D732").IsUnique();
+            entity.HasIndex(e => e.CorreoElectronico, "UQ__Usuario__531402F3D31D170F").IsUnique();
 
             entity.Property(e => e.Contrasena).HasMaxLength(255);
             entity.Property(e => e.CorreoElectronico).HasMaxLength(255);
@@ -305,11 +305,11 @@ public partial class SistemaNominaContext : DbContext
 
             entity.HasOne(d => d.Emisor).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.EmisorId)
-                .HasConstraintName("FK__Usuario__EmisorI__3C69FB99");
+                .HasConstraintName("FK__Usuario__EmisorI__619B8048");
 
             entity.HasOne(d => d.Sucursal).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.SucursalId)
-                .HasConstraintName("FK__Usuario__Sucursa__3D5E1FD2");
+                .HasConstraintName("FK__Usuario__Sucursa__628FA481");
         });
 
         OnModelCreatingPartial(modelBuilder);

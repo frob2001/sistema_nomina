@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<SistemaNominaContext>(options =>
+builder.Services.AddDbContext<SistemanominaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB_CONNECTION_STRING")));
 
 // Todo esto hay que borrar !!!

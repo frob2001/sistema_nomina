@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public UsuariosController(SistemaNominaContext context)
+        public UsuariosController(SistemanominaContext context)
         {
             _context = context;
         }
@@ -46,15 +46,6 @@ namespace webapi.Controllers
             }
 
             return BadRequest();
-        }
-
-
-        public class UsuarioInfoDTO
-        {
-            public string? Nombre { get; set; }
-            public string? CorreoElectronico { get; set; }
-            public EmisorDTO? Emisor { get; set; }
-            public SucursalDTO? Sucursal { get; set; }
         }
 
         // GET: api/Usuarios/info/5

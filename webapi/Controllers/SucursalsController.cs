@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class SucursalsController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public SucursalsController(SistemaNominaContext context)
+        public SucursalsController(SistemanominaContext context)
         {
             _context = context;
         }

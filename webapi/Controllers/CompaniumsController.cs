@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class CompaniasController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public CompaniasController(SistemaNominaContext context)
+        public CompaniasController(SistemanominaContext context)
         {
             _context = context;
         }

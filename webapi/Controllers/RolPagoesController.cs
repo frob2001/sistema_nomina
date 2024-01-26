@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class RolPagosController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public RolPagosController(SistemaNominaContext context)
+        public RolPagosController(SistemanominaContext context)
         {
             _context = context;
         }

@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ServiceLinker/locations/westus/connectors/ConectionStringsDB_CONNECTION_STRING_D7626249EC",
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sistemanomina/databases/sistemanomina",
+      "type": "mssql.azure",
+      "connectionId": "ConectionStrings:DB_CONNECTION_STRING",
+      "dynamicId": null
+    }
+  }
+}

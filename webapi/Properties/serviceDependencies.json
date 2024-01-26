@@ -2,6 +2,11 @@
   "dependencies": {
     "apis1": {
       "type": "apis"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConectionStrings:DB_CONNECTION_STRING",
+      "dynamicId": null
     }
   }
 }

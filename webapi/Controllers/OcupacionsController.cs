@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class OcupacionesController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public OcupacionesController(SistemaNominaContext context)
+        public OcupacionesController(SistemanominaContext context)
         {
             _context = context;
         }

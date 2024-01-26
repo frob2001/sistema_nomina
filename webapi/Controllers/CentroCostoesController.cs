@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class CentroCostosController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public CentroCostosController(SistemaNominaContext context)
+        public CentroCostosController(SistemanominaContext context)
         {
             _context = context;
         }

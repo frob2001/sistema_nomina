@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class EmisorsController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public EmisorsController(SistemaNominaContext context)
+        public EmisorsController(SistemanominaContext context)
         {
             _context = context;
         }

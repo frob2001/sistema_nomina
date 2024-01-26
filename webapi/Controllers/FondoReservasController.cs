@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class FondoReservasController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public FondoReservasController(SistemaNominaContext context)
+        public FondoReservasController(SistemanominaContext context)
         {
             _context = context;
         }

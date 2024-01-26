@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class MovimientosPlanillasController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public MovimientosPlanillasController(SistemaNominaContext context)
+        public MovimientosPlanillasController(SistemanominaContext context)
         {
             _context = context;
         }

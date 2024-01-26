@@ -13,9 +13,9 @@ namespace webapi.Controllers
     [ApiController]
     public class NivelSalarialsController : ControllerBase
     {
-        private readonly SistemaNominaContext _context;
+        private readonly SistemanominaContext _context;
 
-        public NivelSalarialsController(SistemaNominaContext context)
+        public NivelSalarialsController(SistemanominaContext context)
         {
             _context = context;
         }
