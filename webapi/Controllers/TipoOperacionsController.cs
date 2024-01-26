@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class TipoOperacionDTO
-        {
-            public int TipoOperacionId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/TipoOperaciones
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TipoOperacionDTO>>> GetTipoOperaciones()

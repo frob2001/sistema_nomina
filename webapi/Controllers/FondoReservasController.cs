@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class FondoReservaDTO
-        {
-            public int FondoReservaId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/FondoReservas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FondoReservaDTO>>> GetFondoReservas()

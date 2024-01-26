@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class CompaniaDTO
-        {
-            public int CompaniaId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/Companias
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompaniaDTO>>> GetCompanias()

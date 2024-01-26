@@ -20,11 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class TipoComisionDTO
-        {
-            public int TipoComisionId { get; set; }
-            public string? Nombre { get; set; }
-        }
 
         // GET: api/TipoComisions
         [HttpGet]

@@ -9,7 +9,7 @@ using webapi.Models;
 
 namespace webapi.Controllers
 {
-    [Route("api/Empleados")]
+    [Route("Empleado")]
     [ApiController]
     public class EmpleadosController : ControllerBase
     {
@@ -24,6 +24,208 @@ namespace webapi.Controllers
         public class EmpleadoDTO
         {
             public int EmpleadoId { get; set; }
+            public CompaniaDTO? Compania { get; set; }
+            public TipoEmpleadoDTO? TipoEmpleado { get; set; }
+            public string? ApellidoPaterno { get; set; }
+            public string? ApellidoMaterno { get; set; }
+            public string? Nombres { get; set; }
+            public string? Sexo { get; set; }
+            public string? NumeroCedula { get; set; }
+            public string? Direccion { get; set; }
+            public string? Telefono1 { get; set; }
+            public string? Telefono2 { get; set; }
+            public TipoContratoDTO? TipoContrato { get; set; }
+            public string? CarnetIess { get; set; }
+            public OcupacionDTO? Ocupacion { get; set; }
+            public NivelSalarialDTO? NivelSalarial { get; set; }
+            public TipoComisionDTO? TipoComision { get; set; }
+            public CentroCostoDTO? CentroCostos { get; set; }
+            public DateTime? FechaNacimiento { get; set; }
+            public DateTime? FechaIngreso { get; set; }
+            public string? CuentaBancaria { get; set; }
+            public BancoDTO? Banco { get; set; }
+            public TipoCuentaDTO? TipoCuenta { get; set; }
+            public decimal? Bonificacion { get; set; }
+            public decimal? SueldoBase { get; set; }
+            public FondoReservaDTO? FondoReserva { get; set; }
+            public bool? Reingreso { get; set; }
+            public DateTime? FechaReingreso { get; set; }
+            public string? FormaCalculo13 { get; set; }
+            public string? FormaCalculo14 { get; set; }
+        }
+
+        // GET: api/Empleados
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<EmpleadoDTO>>> GetEmpleados()
+        {
+            var empleados = await _context.Empleados
+                .Select(e => new EmpleadoDTO
+                {
+                    EmpleadoId = e.EmpleadoId,
+                    Compania = new CompaniaDTO
+                    {
+                        CompaniaId = e.Compania.CompaniaId,
+                        Nombre = e.Compania.Nombre
+                    },
+                    TipoEmpleado = new TipoEmpleadoDTO
+                    {
+                        TipoEmpleadoId = e.TipoEmpleado.TipoEmpleadoId,
+                        Nombre = e.TipoEmpleado.Nombre
+                    },
+                    ApellidoPaterno = e.ApellidoPaterno,
+                    ApellidoMaterno = e.ApellidoMaterno,
+                    Nombres = e.Nombres,
+                    Sexo = e.Sexo,
+                    NumeroCedula = e.NumeroCedula,
+                    Direccion = e.Direccion,
+                    Telefono1 = e.Telefono1,
+                    Telefono2 = e.Telefono2,
+                    TipoContrato = new TipoContratoDTO
+                    {
+                        TipoContratoId = e.TipoContrato.TipoContratoId,
+                        Nombre = e.TipoContrato.Nombre
+                    },
+                    CarnetIess = e.CarnetIess,
+                    Ocupacion = new OcupacionDTO
+                    {
+                        OcupacionId = e.Ocupacion.OcupacionId,
+                        Nombre = e.Ocupacion.Nombre
+                    },
+                    NivelSalarial = new NivelSalarialDTO
+                    {
+                        NivelSalarialId = e.NivelSalarial.NivelSalarialId,
+                        Nombre = e.NivelSalarial.Nombre
+                    },
+                    TipoComision = new TipoComisionDTO
+                    {
+                        TipoComisionId = e.TipoComision.TipoComisionId,
+                        Nombre = e.TipoComision.Nombre
+                    },
+                    CentroCostos = new CentroCostoDTO
+                    {
+                        CentroCostoId = e.CentroCostos.CentroCostosId,
+                        Nombre = e.CentroCostos.Nombre
+                    },
+                    FechaNacimiento = e.FechaNacimiento,
+                    FechaIngreso = e.FechaIngreso,
+                    CuentaBancaria = e.CuentaBancaria,
+                    Banco = new BancoDTO
+                    {
+                        BancoId = e.Banco.BancoId,
+                        Nombre = e.Banco.Nombre
+                    },
+                    TipoCuenta = new TipoCuentaDTO
+                    {
+                        TipoCuentaId = e.TipoCuenta.TipoCuentaId,
+                        Nombre = e.TipoCuenta.Nombre
+                    },
+                    Bonificacion = e.Bonificacion,
+                    SueldoBase = e.SueldoBase,
+                    FondoReserva = new FondoReservaDTO
+                    {
+                        FondoReservaId = e.FondoReserva.FondoReservaId,
+                        Nombre = e.FondoReserva.Nombre
+                    },
+                    Reingreso = e.Reingreso,
+                    FechaReingreso = e.FechaReingreso,
+                    FormaCalculo13 = e.FormaCalculo13,
+                    FormaCalculo14 = e.FormaCalculo14
+                })
+                .ToListAsync();
+
+            return empleados;
+        }
+
+        // GET: api/Empleados/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EmpleadoDTO>> GetEmpleado(int id)
+        {
+            var empleado = await _context.Empleados
+                .Where(e => e.EmpleadoId == id)
+                .Select(e => new EmpleadoDTO
+                {
+                    EmpleadoId = e.EmpleadoId,
+                    Compania = new CompaniaDTO
+                    {
+                        CompaniaId = e.Compania.CompaniaId,
+                        Nombre = e.Compania.Nombre
+                    },
+                    TipoEmpleado = new TipoEmpleadoDTO
+                    {
+                        TipoEmpleadoId = e.TipoEmpleado.TipoEmpleadoId,
+                        Nombre = e.TipoEmpleado.Nombre
+                    },
+                    ApellidoPaterno = e.ApellidoPaterno,
+                    ApellidoMaterno = e.ApellidoMaterno,
+                    Nombres = e.Nombres,
+                    Sexo = e.Sexo,
+                    NumeroCedula = e.NumeroCedula,
+                    Direccion = e.Direccion,
+                    Telefono1 = e.Telefono1,
+                    Telefono2 = e.Telefono2,
+                    TipoContrato = new TipoContratoDTO
+                    {
+                        TipoContratoId = e.TipoContrato.TipoContratoId,
+                        Nombre = e.TipoContrato.Nombre
+                    },
+                    CarnetIess = e.CarnetIess,
+                    Ocupacion = new OcupacionDTO
+                    {
+                        OcupacionId = e.Ocupacion.OcupacionId,
+                        Nombre = e.Ocupacion.Nombre
+                    },
+                    NivelSalarial = new NivelSalarialDTO
+                    {
+                        NivelSalarialId = e.NivelSalarial.NivelSalarialId,
+                        Nombre = e.NivelSalarial.Nombre
+                    },
+                    TipoComision = new TipoComisionDTO
+                    {
+                        TipoComisionId = e.TipoComision.TipoComisionId,
+                        Nombre = e.TipoComision.Nombre
+                    },
+                    CentroCostos = new CentroCostoDTO
+                    {
+                        CentroCostoId = e.CentroCostos.CentroCostosId,
+                        Nombre = e.CentroCostos.Nombre
+                    },
+                    FechaNacimiento = e.FechaNacimiento,
+                    FechaIngreso = e.FechaIngreso,
+                    CuentaBancaria = e.CuentaBancaria,
+                    Banco = new BancoDTO
+                    {
+                        BancoId = e.Banco.BancoId,
+                        Nombre = e.Banco.Nombre
+                    },
+                    TipoCuenta = new TipoCuentaDTO
+                    {
+                        TipoCuentaId = e.TipoCuenta.TipoCuentaId,
+                        Nombre = e.TipoCuenta.Nombre
+                    },
+                    Bonificacion = e.Bonificacion,
+                    SueldoBase = e.SueldoBase,
+                    FondoReserva = new FondoReservaDTO
+                    {
+                        FondoReservaId = e.FondoReserva.FondoReservaId,
+                        Nombre = e.FondoReserva.Nombre
+                    },
+                    Reingreso = e.Reingreso,
+                    FechaReingreso = e.FechaReingreso,
+                    FormaCalculo13 = e.FormaCalculo13,
+                    FormaCalculo14 = e.FormaCalculo14
+                })
+                .FirstOrDefaultAsync();
+
+            if (empleado == null)
+            {
+                return NotFound();
+            }
+
+            return empleado;
+        }
+
+        public class EmpleadoCreateDTO
+        {
             public int? CompaniaId { get; set; }
             public int? TipoEmpleadoId { get; set; }
             public string? ApellidoPaterno { get; set; }
@@ -54,148 +256,54 @@ namespace webapi.Controllers
             public string? FormaCalculo14 { get; set; }
         }
 
-        // GET: api/Empleados
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmpleadoDTO>>> GetEmpleados()
-        {
-            var empleados = await _context.Empleados
-                .Select(e => new EmpleadoDTO
-                {
-                    EmpleadoId = e.EmpleadoId,
-                    CompaniaId = e.CompaniaId,
-                    TipoEmpleadoId = e.TipoEmpleadoId,
-                    ApellidoPaterno = e.ApellidoPaterno,
-                    ApellidoMaterno = e.ApellidoMaterno,
-                    Nombres = e.Nombres,
-                    Sexo = e.Sexo,
-                    NumeroCedula = e.NumeroCedula,
-                    Direccion = e.Direccion,
-                    Telefono1 = e.Telefono1,
-                    Telefono2 = e.Telefono2,
-                    TipoContratoId = e.TipoContratoId,
-                    CarnetIess = e.CarnetIess,
-                    OcupacionId = e.OcupacionId,
-                    NivelSalarialId = e.NivelSalarialId,
-                    TipoComisionId = e.TipoComisionId,
-                    CentroCostosId = e.CentroCostosId,
-                    FechaNacimiento = e.FechaNacimiento,
-                    FechaIngreso = e.FechaIngreso,
-                    CuentaBancaria = e.CuentaBancaria,
-                    BancoId = e.BancoId,
-                    TipoCuentaId = e.TipoCuentaId,
-                    Bonificacion = e.Bonificacion,
-                    SueldoBase = e.SueldoBase,
-                    FondoReservaId = e.FondoReservaId,
-                    Reingreso = e.Reingreso,
-                    FechaReingreso = e.FechaReingreso,
-                    FormaCalculo13 = e.FormaCalculo13,
-                    FormaCalculo14 = e.FormaCalculo14
-                })
-                .ToListAsync();
-
-            return empleados;
-        }
-
-        // GET: api/Empleados/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EmpleadoDTO>> GetEmpleado(int id)
-        {
-            var empleado = await _context.Empleados
-                .Where(e => e.EmpleadoId == id)
-                .Select(e => new EmpleadoDTO
-                {
-                    EmpleadoId = e.EmpleadoId,
-                    CompaniaId = e.CompaniaId,
-                    TipoEmpleadoId = e.TipoEmpleadoId,
-                    ApellidoPaterno = e.ApellidoPaterno,
-                    ApellidoMaterno = e.ApellidoMaterno,
-                    Nombres = e.Nombres,
-                    Sexo = e.Sexo,
-                    NumeroCedula = e.NumeroCedula,
-                    Direccion = e.Direccion,
-                    Telefono1 = e.Telefono1,
-                    Telefono2 = e.Telefono2,
-                    TipoContratoId = e.TipoContratoId,
-                    CarnetIess = e.CarnetIess,
-                    OcupacionId = e.OcupacionId,
-                    NivelSalarialId = e.NivelSalarialId,
-                    TipoComisionId = e.TipoComisionId,
-                    CentroCostosId = e.CentroCostosId,
-                    FechaNacimiento = e.FechaNacimiento,
-                    FechaIngreso = e.FechaIngreso,
-                    CuentaBancaria = e.CuentaBancaria,
-                    BancoId = e.BancoId,
-                    TipoCuentaId = e.TipoCuentaId,
-                    Bonificacion = e.Bonificacion,
-                    SueldoBase = e.SueldoBase,
-                    FondoReservaId = e.FondoReservaId,
-                    Reingreso = e.Reingreso,
-                    FechaReingreso = e.FechaReingreso,
-                    FormaCalculo13 = e.FormaCalculo13,
-                    FormaCalculo14 = e.FormaCalculo14
-                })
-                .FirstOrDefaultAsync();
-
-            if (empleado == null)
-            {
-                return NotFound();
-            }
-
-            return empleado;
-        }
-
         // POST: api/Empleados
         [HttpPost]
-        public async Task<ActionResult<EmpleadoDTO>> PostEmpleado(EmpleadoDTO empleadoDTO)
+        public async Task<ActionResult<Empleado>> PostEmpleado(EmpleadoCreateDTO empleadoCreateDTO)
         {
             // Validación de los datos del DTO según tus necesidades
 
             var empleado = new Empleado
             {
-                CompaniaId = empleadoDTO.CompaniaId,
-                TipoEmpleadoId = empleadoDTO.TipoEmpleadoId,
-                ApellidoPaterno = empleadoDTO.ApellidoPaterno,
-                ApellidoMaterno = empleadoDTO.ApellidoMaterno,
-                Nombres = empleadoDTO.Nombres,
-                Sexo = empleadoDTO.Sexo,
-                NumeroCedula = empleadoDTO.NumeroCedula,
-                Direccion = empleadoDTO.Direccion,
-                Telefono1 = empleadoDTO.Telefono1,
-                Telefono2 = empleadoDTO.Telefono2,
-                TipoContratoId = empleadoDTO.TipoContratoId,
-                CarnetIess = empleadoDTO.CarnetIess,
-                OcupacionId = empleadoDTO.OcupacionId,
-                NivelSalarialId = empleadoDTO.NivelSalarialId,
-                TipoComisionId = empleadoDTO.TipoComisionId,
-                CentroCostosId = empleadoDTO.CentroCostosId,
-                FechaNacimiento = empleadoDTO.FechaNacimiento,
-                FechaIngreso = empleadoDTO.FechaIngreso,
-                CuentaBancaria = empleadoDTO.CuentaBancaria,
-                BancoId = empleadoDTO.BancoId,
-                TipoCuentaId = empleadoDTO.TipoCuentaId,
-                Bonificacion = empleadoDTO.Bonificacion,
-                SueldoBase = empleadoDTO.SueldoBase,
-                FondoReservaId = empleadoDTO.FondoReservaId,
-                Reingreso = empleadoDTO.Reingreso,
-                FechaReingreso = empleadoDTO.FechaReingreso,
-                FormaCalculo13 = empleadoDTO.FormaCalculo13,
-                FormaCalculo14 = empleadoDTO.FormaCalculo14
+                CompaniaId = empleadoCreateDTO.CompaniaId,
+                TipoEmpleadoId = empleadoCreateDTO.TipoEmpleadoId,
+                ApellidoPaterno = empleadoCreateDTO.ApellidoPaterno,
+                ApellidoMaterno = empleadoCreateDTO.ApellidoMaterno,
+                Nombres = empleadoCreateDTO.Nombres,
+                Sexo = empleadoCreateDTO.Sexo,
+                NumeroCedula = empleadoCreateDTO.NumeroCedula,
+                Direccion = empleadoCreateDTO.Direccion,
+                Telefono1 = empleadoCreateDTO.Telefono1,
+                Telefono2 = empleadoCreateDTO.Telefono2,
+                TipoContratoId = empleadoCreateDTO.TipoContratoId,
+                CarnetIess = empleadoCreateDTO.CarnetIess,
+                OcupacionId = empleadoCreateDTO.OcupacionId,
+                NivelSalarialId = empleadoCreateDTO.NivelSalarialId,
+                TipoComisionId = empleadoCreateDTO.TipoComisionId,
+                CentroCostosId = empleadoCreateDTO.CentroCostosId,
+                FechaNacimiento = empleadoCreateDTO.FechaNacimiento,
+                FechaIngreso = empleadoCreateDTO.FechaIngreso,
+                CuentaBancaria = empleadoCreateDTO.CuentaBancaria,
+                BancoId = empleadoCreateDTO.BancoId,
+                TipoCuentaId = empleadoCreateDTO.TipoCuentaId,
+                Bonificacion = empleadoCreateDTO.Bonificacion,
+                SueldoBase = empleadoCreateDTO.SueldoBase,
+                FondoReservaId = empleadoCreateDTO.FondoReservaId,
+                Reingreso = empleadoCreateDTO.Reingreso,
+                FechaReingreso = empleadoCreateDTO.FechaReingreso,
+                FormaCalculo13 = empleadoCreateDTO.FormaCalculo13,
+                FormaCalculo14 = empleadoCreateDTO.FormaCalculo14
             };
 
             _context.Empleados.Add(empleado);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmpleado", new { id = empleado.EmpleadoId }, empleadoDTO);
+            return CreatedAtAction("GetEmpleado", new { id = empleado.EmpleadoId }, empleado);
         }
 
         // PUT: api/Empleados/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmpleado(int id, EmpleadoDTO empleadoDTO)
+        public async Task<IActionResult> PutEmpleado(int id, EmpleadoCreateDTO empleadoUpdateDTO)
         {
-            if (id != empleadoDTO.EmpleadoId)
-            {
-                return BadRequest();
-            }
 
             var empleado = await _context.Empleados.FindAsync(id);
 
@@ -205,34 +313,34 @@ namespace webapi.Controllers
             }
 
             // Actualiza las propiedades del empleado según el DTO
-            empleado.CompaniaId = empleadoDTO.CompaniaId;
-            empleado.TipoEmpleadoId = empleadoDTO.TipoEmpleadoId;
-            empleado.ApellidoPaterno = empleadoDTO.ApellidoPaterno;
-            empleado.ApellidoMaterno = empleadoDTO.ApellidoMaterno;
-            empleado.Nombres = empleadoDTO.Nombres;
-            empleado.Sexo = empleadoDTO.Sexo;
-            empleado.NumeroCedula = empleadoDTO.NumeroCedula;
-            empleado.Direccion = empleadoDTO.Direccion;
-            empleado.Telefono1 = empleadoDTO.Telefono1;
-            empleado.Telefono2 = empleadoDTO.Telefono2;
-            empleado.TipoContratoId = empleadoDTO.TipoContratoId;
-            empleado.CarnetIess = empleadoDTO.CarnetIess;
-            empleado.OcupacionId = empleadoDTO.OcupacionId;
-            empleado.NivelSalarialId = empleadoDTO.NivelSalarialId;
-            empleado.TipoComisionId = empleadoDTO.TipoComisionId;
-            empleado.CentroCostosId = empleadoDTO.CentroCostosId;
-            empleado.FechaNacimiento = empleadoDTO.FechaNacimiento;
-            empleado.FechaIngreso = empleadoDTO.FechaIngreso;
-            empleado.CuentaBancaria = empleadoDTO.CuentaBancaria;
-            empleado.BancoId = empleadoDTO.BancoId;
-            empleado.TipoCuentaId = empleadoDTO.TipoCuentaId;
-            empleado.Bonificacion = empleadoDTO.Bonificacion;
-            empleado.SueldoBase = empleadoDTO.SueldoBase;
-            empleado.FondoReservaId = empleadoDTO.FondoReservaId;
-            empleado.Reingreso = empleadoDTO.Reingreso;
-            empleado.FechaReingreso = empleadoDTO.FechaReingreso;
-            empleado.FormaCalculo13 = empleadoDTO.FormaCalculo13;
-            empleado.FormaCalculo14 = empleadoDTO.FormaCalculo14;
+            empleado.CompaniaId = empleadoUpdateDTO.CompaniaId;
+            empleado.TipoEmpleadoId = empleadoUpdateDTO.TipoEmpleadoId;
+            empleado.ApellidoPaterno = empleadoUpdateDTO.ApellidoPaterno;
+            empleado.ApellidoMaterno = empleadoUpdateDTO.ApellidoMaterno;
+            empleado.Nombres = empleadoUpdateDTO.Nombres;
+            empleado.Sexo = empleadoUpdateDTO.Sexo;
+            empleado.NumeroCedula = empleadoUpdateDTO.NumeroCedula;
+            empleado.Direccion = empleadoUpdateDTO.Direccion;
+            empleado.Telefono1 = empleadoUpdateDTO.Telefono1;
+            empleado.Telefono2 = empleadoUpdateDTO.Telefono2;
+            empleado.TipoContratoId = empleadoUpdateDTO.TipoContratoId;
+            empleado.CarnetIess = empleadoUpdateDTO.CarnetIess;
+            empleado.OcupacionId = empleadoUpdateDTO.OcupacionId;
+            empleado.NivelSalarialId = empleadoUpdateDTO.NivelSalarialId;
+            empleado.TipoComisionId = empleadoUpdateDTO.TipoComisionId;
+            empleado.CentroCostosId = empleadoUpdateDTO.CentroCostosId;
+            empleado.FechaNacimiento = empleadoUpdateDTO.FechaNacimiento;
+            empleado.FechaIngreso = empleadoUpdateDTO.FechaIngreso;
+            empleado.CuentaBancaria = empleadoUpdateDTO.CuentaBancaria;
+            empleado.BancoId = empleadoUpdateDTO.BancoId;
+            empleado.TipoCuentaId = empleadoUpdateDTO.TipoCuentaId;
+            empleado.Bonificacion = empleadoUpdateDTO.Bonificacion;
+            empleado.SueldoBase = empleadoUpdateDTO.SueldoBase;
+            empleado.FondoReservaId = empleadoUpdateDTO.FondoReservaId;
+            empleado.Reingreso = empleadoUpdateDTO.Reingreso;
+            empleado.FechaReingreso = empleadoUpdateDTO.FechaReingreso;
+            empleado.FormaCalculo13 = empleadoUpdateDTO.FormaCalculo13;
+            empleado.FormaCalculo14 = empleadoUpdateDTO.FormaCalculo14;
 
             _context.Entry(empleado).State = EntityState.Modified;
 
@@ -260,7 +368,6 @@ namespace webapi.Controllers
         public async Task<IActionResult> DeleteEmpleado(int id)
         {
             var empleado = await _context.Empleados.FindAsync(id);
-
             if (empleado == null)
             {
                 return NotFound();
@@ -271,7 +378,6 @@ namespace webapi.Controllers
 
             return NoContent();
         }
-
 
         private bool EmpleadoExists(int id)
         {

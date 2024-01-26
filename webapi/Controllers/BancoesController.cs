@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class BancoDTO
-        {
-            public int BancoId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/Bancos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BancoDTO>>> GetBancos()

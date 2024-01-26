@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class ConceptoDTO
-        {
-            public int ConceptoId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/Conceptos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ConceptoDTO>>> GetConceptos()

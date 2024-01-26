@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class NivelSalarialDTO
-        {
-            public int NivelSalarialId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/NivelSalarials
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NivelSalarialDTO>>> GetNivelSalarials()

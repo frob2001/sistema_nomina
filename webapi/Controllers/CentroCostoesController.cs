@@ -20,12 +20,6 @@ namespace webapi.Controllers
             _context = context;
         }
 
-        public class CentroCostoDTO
-        {
-            public int CentroCostoId { get; set; }
-            public string? Nombre { get; set; }
-        }
-
         // GET: api/CentroCostos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CentroCostoDTO>>> GetCentroCostos()
