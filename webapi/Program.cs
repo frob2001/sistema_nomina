@@ -3,7 +3,7 @@ using webapi.Models;
 using Microsoft.AspNetCore.Cors; // Borrar !!!
 using Microsoft.Extensions.DependencyInjection; //Borrar !!!
 using LearningCqrs.Core.Swagger;
-using webapi.Controllers;
+//using webapi.Controllers;
 using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<KattionDataBaseContext>(options =>
+builder.Services.AddDbContext<SistemaNominaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB_CONNECTION_STRING")));
 
 // Todo esto hay que borrar !!!
@@ -23,14 +23,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", builder =>
     {
         builder
-            .WithOrigins("https://localhost:5173", "https://kattionapp.azurewebsites.net") // Agregar la nueva URL aquí
+            .WithOrigins("https://localhost:5173") // Agregar la nueva URL aquí
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
-
-builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAd");
-
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -44,11 +41,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGenNewtonsoftSupport();
 builder.Services.AddSwaggerGen(opt => opt.DocumentFilter<JsonPatchDocumentFilter>());
 
-builder.Services.AddAzureClients(clientBuilder =>
-{
-    clientBuilder.AddBlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage"), preferMsi: true);
-    clientBuilder.AddQueueServiceClient(builder.Configuration.GetConnectionString("AzureQueueStorage"), preferMsi: true);
-});
 
 
 

@@ -5,13 +5,21 @@ namespace webapi.Models;
 
 public partial class Usuario
 {
-    public int IdUsuario { get; set; }
+    public int UsuarioId { get; set; }
 
-    public string Correo { get; set; } = null!;
+    public string? Nombre { get; set; }
 
-    public string Nombre { get; set; } = null!;
+    public string? CorreoElectronico { get; set; }
 
-    public string? Apellido { get; set; }
+    public string? Contrasena { get; set; }
 
-    public virtual ICollection<Recordatorio> Recordatorios { get; set; } = new List<Recordatorio>();
+    public int? EmisorId { get; set; }
+
+    public int? SucursalId { get; set; }
+
+    public virtual Emisor? Emisor { get; set; }
+
+    public virtual ICollection<RolPago> RolPagos { get; set; } = new List<RolPago>();
+
+    public virtual Sucursal? Sucursal { get; set; }
 }
