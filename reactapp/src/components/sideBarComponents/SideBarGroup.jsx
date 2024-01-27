@@ -35,20 +35,14 @@ function SideBarGroup(props) {
 
     const getIconName = () => {
         switch (props.nameSuperItem) {
-            case "marcas":
-                return "faRegistered";
-            case "patentes":
-                return "faLightbulb";
-            case "general":
-                return "faBook";
-            case "regulatorio":
-                return "faFlask";
-            case "infracciones":
-                return "faExclamationTriangle";
-            case "administracion":
-                return "faTools";
-            case "recordatorios":
-                return "faBell";
+            case "empleados":
+                return "faUsers";
+            case "usuarios":
+                return "faCircleUser";
+            case "movimientos":
+                return "faArrowRightArrowLeft";
+            case "rolpagos":
+                return "faMoneyBill";
             case "gestion":
                 return "faSliders";
             default:

@@ -12,4 +12,8 @@
     <BuildCommand>npm run dev</BuildCommand>
     <StartupCommandWorkingDirectory>..\reactapp</StartupCommandWorkingDirectory>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\components\empleados\" />
+    <Folder Include="src\components\loginPageComponents\" />
+  </ItemGroup>
 </Project>

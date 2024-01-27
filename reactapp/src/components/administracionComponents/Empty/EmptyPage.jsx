@@ -1,32 +1,18 @@
-﻿import React from 'react';
-
-import { useMsal } from '@azure/msal-react';
+﻿import React, { useContext } from "react";
+import { AuthContext, kc } from '../../../context/authContext';
 
 function EmptyPage() {
 
-    // Auth
-    const { accounts } = useMsal();
-    const account = accounts[0];
+    // ---------------- KeyCloak -------------------
 
-    const name = account?.idTokenClaims?.name;
-
-    function extractFirstName(fullName) {
-        const nameParts = fullName.split(' ');
-        if (nameParts.length >= 1) {
-            return nameParts[0];
-        }
-        return '';
-    }
-
-    const firstName = extractFirstName(name);
+    const { isAuthenticated, userProfile } = useContext(AuthContext);
 
     return (
         <div className="empty-page-container">
-            <h1 className="empty-page-logo">KATTION</h1>
+            <h1 className="empty-page-logo">Sistema de gestión de nómina</h1>
             <div className="empty-page-msgspace">
                 <div className="empty-page-msg">
-                    <span>¡Qué gusto tenerte de vuelta {firstName}!</span>
-                    <span>Para comenzar, selecciona una opción del menú</span>
+                    <span>¡ Qué gusto tenerte de vuelta {userProfile?.firstName || ''}!</span>
                 </div>
             </div>
         </div>
