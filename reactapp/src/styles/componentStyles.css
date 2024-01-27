@@ -10,10 +10,10 @@
 
 :root {
     /*Colors*/
-    --main-cyan: #1CC9CF;
-    --main-cyan-light: #1dd0d7;
-    --secondary-blue: #009eac;
-    --secondary-blue-light: #00c1d2;
+    --main-cyan: #1b7844;
+    --main-cyan-light: #2cc46f;
+    --secondary-blue: #1b7e46;
+    --secondary-blue-light: #2bca70;
     --alert: #db1709;
     --alert-light: #ff2b0a;
     --neutral-gray: #898989;
@@ -252,7 +252,7 @@ input:checked + .slider:before {
 }
 
 .login-branding {
-    background: linear-gradient(45deg, #1cc9cf, #148589);
+    background: linear-gradient(0deg, #1b7844, #2bca70);
     background-size: 400% 400%;
     -webkit-animation: AnimationName 23s ease infinite;
     -moz-animation: AnimationName 23s ease infinite;
@@ -260,49 +260,49 @@ input:checked + .slider:before {
     display: flex;
     align-items: end;
     background-color: var(--main-cyan);
-    height: 85vh;
+    height: 100vh;
     border-radius: 0 0 0 20px;
 }
 
 @-webkit-keyframes AnimationName {
     0% {
-        background-position: 83% 0%
+        background-position: 51% 0%
     }
 
     50% {
-        background-position: 18% 100%
+        background-position: 50% 100%
     }
 
     100% {
-        background-position: 83% 0%
+        background-position: 51% 0%
     }
 }
 
 @-moz-keyframes AnimationName {
     0% {
-        background-position: 83% 0%
+        background-position: 51% 0%
     }
 
     50% {
-        background-position: 18% 100%
+        background-position: 50% 100%
     }
 
     100% {
-        background-position: 83% 0%
+        background-position: 51% 0%
     }
 }
 
 @keyframes AnimationName {
     0% {
-        background-position: 83% 0%
+        background-position: 51% 0%
     }
 
     50% {
-        background-position: 18% 100%
+        background-position: 50% 100%
     }
 
     100% {
-        background-position: 83% 0%
+        background-position: 51% 0%
     }
 }
 
@@ -330,7 +330,7 @@ input:checked + .slider:before {
 .app-header {
     grid-row: 1 / span 1;
     height: 100%;
-    background-color: #1cc9cf;
+    background-color: #1b7844;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -767,7 +767,7 @@ input:checked + .slider:before {
     right: 0;
     width: 10px; /* Adjust as needed */
     height: 100%;
-    background: linear-gradient(to left, rgba(28, 201, 207, 0.8), transparent);
+    background: linear-gradient(to left, rgba(27, 120, 68, 0.8), transparent);
     pointer-events: none;
 }
 

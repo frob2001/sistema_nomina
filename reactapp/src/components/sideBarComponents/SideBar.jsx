@@ -2,45 +2,40 @@
 import SideBarGroup from './SideBarGroup';
 import SideBarFooter from "./SideBarFooter";
 import { expand } from '../../context/sidebarSlice';
-import { useMsal } from '@azure/msal-react';
 import { useDispatch } from 'react-redux';
-const adminEmails = import.meta.env.VITE_ADMIN_EMAILS.split(',');
 
 // This component is the whole sidebar
 
 function SideBar(props) {
-
-    // Auth
-    const { accounts } = useMsal();
-    const account = accounts[0] || {};
-    const [isAdmin, setIsAdmin] = useState(false);
-
-    useEffect(() => {
-        // Check if the account's username is in the admin emails list
-        if (account.username && adminEmails.includes(account.username)) {
-            setIsAdmin(true);
-        } else {
-            setIsAdmin(false);
-        }
-    }, [account.username]);
     
 
     // ---- Hooks ----
-    const falseArray = [false, false, false, false, false, false, false, false]; // Se debe cambiar cuando se agregue una nueva categoría
+    const falseArray = [false, false, false, false, false, false]; // Se debe cambiar cuando se agregue una nueva categoría
     const [itemStates, setItemStates] = useState(falseArray);
     const dispatch = useDispatch();
 
     const groups = [
-        { name: "marcas", text: "Marcas", index: 0, subItems: ["Marcas", "Acciones a terceros"] },
-        { name: "patentes", text: "Patentes", index: 1, subItems: ["Patentes", "Inventores"] },
-        { name: "regulatorio", text: "Regulatorio", index: 2, subItems: ["Regulatorio"] },
-        { name: "infracciones", text: "Infracciones", index: 3, subItems: ["Infracciones"] },
-        { name: "general", text: "General", index: 4, subItems: ["Clientes", "Gacetas", "Propietarios"] },
-        ...(isAdmin ? [
-            { name: "administracion", text: "Administración", index: 5, subItems: ["Abogados", "Clases", "Estados"] },
-            { name: "gestion", text: "Gestión", index: 6, subItems: ["Gestión clientes", "Gestión general", "Gestión infracciones", "Gestión marcas", "Gestión patentes", "Gestión regulatorio"] }
-        ] : []),
-        { name: "recordatorios", text: "Recordatorios", index: 7, subItems: ["Recordatorios"] }
+        { name: "empleados", text: "Empleados", index: 0, subItems: ["Empleados"] },
+        { name: "usuarios", text: "Usuarios", index: 1, subItems: ["Usuarios"] },
+        { name: "movimientos", text: "Movientos", index: 2, subItems: ["Movimientos de planilla"] },
+        { name: "rolpagos", text: "Roles", index: 3, subItems: ["Rol de pagos"] },
+        {
+            name: "gestion", text: "Gestión", index: 4, subItems: [
+                "Compañías",
+                "Emisores",
+                "Sucursales",
+                "Tipos de empleado",
+                "Tipos de contrato",
+                "Tipos de comisión",
+                "Tipos de cuenta",
+                "Tipos de operación",
+                "Ocupaciones",
+                "Niveles salariales",
+                "Centros de costo",
+                "Bancos",
+                "Fondos de reserva",
+                "Conceptos",]
+        },
     ]; //Creates the necessary super items
 
     useEffect(() => {

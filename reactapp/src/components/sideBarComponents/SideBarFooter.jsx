@@ -1,30 +1,24 @@
-﻿import React from "react";
+﻿import React, { useContext } from "react";
 import { useSelector } from 'react-redux';
+import { AuthContext, kc } from '../../context/authContext';
 
-import { useMsal } from '@azure/msal-react';
 
 // This component groups icons sidebar categories and puts the title of the category
 
 function SideBarFooter() {
 
-    // Auth
-    const { accounts } = useMsal();
-    const account = accounts[0];
+    // ---------------- KeyCloak -------------------
 
-    // Extracting user details from idTokenClaims
-    const name = account?.idTokenClaims?.name;
+    const { isAuthenticated, userProfile } = useContext(AuthContext);
 
-    function extractInitials(fullName) {
-        const nameParts = fullName.split(' ');
-        if (nameParts.length >= 2) {
-            const firstNameInitial = nameParts[0].charAt(0);
-            const lastNameInitial = nameParts[1].charAt(0);
-            return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
-        }
-        return '';
+    function extractInitials() {
+        const firstNameInitial = userProfile?.firstName.charAt(0);
+        const lastNameInitial = userProfile?.lastName.charAt(0);
+
+        return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
     }
 
-    const initials = extractInitials(name);
+    const initials = extractInitials();
 
     // --- Hooks ----
     const isExpanded = useSelector(state => state.sidebar.isExpanded);
@@ -32,9 +26,9 @@ function SideBarFooter() {
     return (
         <div className="footer-container">
             <div className="circulo-siglas">
-                <span>{initials}</span>
+                <span>{userProfile?.firstName === undefined ? 'GN' : initials}</span>
             </div>
-            {isExpanded && <label>{name}</label>}
+            {isExpanded && <label>{userProfile?.firstName || 'Bienvenido'} {userProfile?.lastName || ''}</label>}
         </div>
     );
 }

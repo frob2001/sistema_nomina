@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRegistered, faLightbulb, faBook, faFlask, faExclamationTriangle, faTools, faBell, faSliders } from '@fortawesome/free-solid-svg-icons'
+import { faRegistered, faLightbulb, faBook, faFlask, faExclamationTriangle, faTools, faBell, faSliders, faUsers, faCircleUser, faArrowRightArrowLeft, faMoneyBill } from '@fortawesome/free-solid-svg-icons'
 import { useSelector } from 'react-redux';
 import { Badge } from 'primereact/badge';
 import pagesContext from '../../context/pagesContext';
@@ -26,20 +26,14 @@ function Icon(props) {
  
     const getFontAwesomeIcon = () => {
         switch (props.iconName) {
-            case "faRegistered":
-                return faRegistered;
-            case "faLightbulb":
-                return faLightbulb;
-            case "faBook":
-                return faBook;
-            case "faFlask":
-                return faFlask;
-            case "faExclamationTriangle":
-                return faExclamationTriangle;
-            case "faTools":
-                return faTools;
-            case "faBell":
-                return faBell;
+            case "faUsers":
+                return faUsers;
+            case "faCircleUser":
+                return faCircleUser;
+            case "faArrowRightArrowLeft":
+                return faArrowRightArrowLeft;
+            case "faMoneyBill":
+                return faMoneyBill;
             case "faSliders":
                 return faSliders;
             default:
