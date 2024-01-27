@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using webapi.Models;
+using System.Text;
+
 
 namespace webapi.Controllers
 {
@@ -13,11 +16,15 @@ namespace webapi.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
+        private readonly HttpClient _httpClient;
         private readonly SistemanominaContext _context;
+        private readonly AwsConnection _awsConnection;
 
-        public UsuariosController(SistemanominaContext context)
+        public UsuariosController(HttpClient httpClient, SistemanominaContext context)
         {
+            _httpClient = httpClient;
             _context = context;
+            _awsConnection = new AwsConnection();
         }
 
         public class LoginDTO
@@ -48,6 +55,39 @@ namespace webapi.Controllers
             return BadRequest();
         }
 
+        public class EncryptDTO
+        {
+            public string email { get; set; }
+        }
+
+
+        [HttpPost("encryptAndSend")]
+        public async Task<ActionResult<string>> EncryptAndSendData([FromBody] EncryptDTO encryptDto)
+        {
+            try
+            {
+                // Crear la solicitud JSON
+                // Leer y encriptar la respuesta
+                var encryptedEmail = _awsConnection.Encrypt(encryptDto.email);
+                var jsonRequest = JsonConvert.SerializeObject(new { email = encryptedEmail });
+                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+                // Hacer la solicitud POST
+                var response = await _httpClient.PostAsync("http://localhost:5000/usersbyemail", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest("Error al realizar la solicitud al servicio externo.");
+                }
+
+                var responseData = await response.Content.ReadAsStringAsync();
+                return Ok(responseData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         // GET: api/Usuarios/info/5
         [HttpGet("Info/{id}")]
         public async Task<ActionResult<UsuarioInfoDTO>> GetUsuarioInfo(int id)
@@ -108,6 +148,28 @@ namespace webapi.Controllers
 
             return CreatedAtAction("GetUsuario", new { id = usuario.UsuarioId }, usuario);
         }
+
+        public class UsuarioDTO
+        {
+            public string Nombre { get; set; }
+            public string CorreoElectronico { get; set; }
+        }
+
+        // GET: api/Usuarios
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
+        {
+            var usuarios = await _context.Usuarios
+                .Select(u => new UsuarioDTO
+                {
+                    Nombre = u.Nombre,
+                    CorreoElectronico = u.CorreoElectronico
+                }).ToListAsync();
+
+            return usuarios;
+        }
+
+
 
 
         // DELETE: api/Usuarios/5
