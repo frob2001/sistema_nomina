@@ -22,7 +22,6 @@ import pagesContext from './context/pagesContext';
 
 import { AuthContext, kc } from './context/authContext';
 import LoginPage from './components/loginPageComponents/LoginPage';
-import EncriptacionPage from './components/administracionComponents/Encriptacion/EncriptacionPage';
 
 const App = () => {
 
@@ -82,7 +81,6 @@ const App = () => {
                                         <EmptyPage />
                                     ) : (
                                         <>
-                                            {pages['Encriptación'] && <EncriptacionPage />}
                                             {pages['Compañías'] && <GestionPagesSuperComponent pageOption="companias" pageTitle="Compañías"/>}
                                             {pages['Emisores'] && <GestionPagesSuperComponent pageOption="emisores" pageTitle="Emisores" />}
                                             {pages['Sucursales'] && <GestionPagesSuperComponent pageOption="sucursales" pageTitle="Sucursales" />}
