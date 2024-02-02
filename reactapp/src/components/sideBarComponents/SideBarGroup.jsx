@@ -35,7 +35,7 @@ function SideBarGroup(props) {
 
     const getIconName = () => {
         switch (props.nameSuperItem) {
-            case "empleados":
+            case "trabajadores":
                 return "faUsers";
             case "usuarios":
                 return "faCircleUser";
