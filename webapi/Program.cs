@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", builder =>
     {
         builder
-            .WithOrigins("https://localhost:5174", "http://localhost:5173") // Agregar la nueva URL aquí
+            .WithOrigins("https://localhost:5174", "http://localhost:5173", "https://localhost:5173") // Agregar la nueva URL aquí
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

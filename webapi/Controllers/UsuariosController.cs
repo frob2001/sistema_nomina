@@ -151,6 +151,7 @@ namespace webapi.Controllers
 
         public class UsuarioDTO
         {
+            public int UsuarioId { get; set; }
             public string Nombre { get; set; }
             public string CorreoElectronico { get; set; }
         }
@@ -162,6 +163,7 @@ namespace webapi.Controllers
             var usuarios = await _context.Usuarios
                 .Select(u => new UsuarioDTO
                 {
+                    UsuarioId = u.UsuarioId,
                     Nombre = u.Nombre,
                     CorreoElectronico = u.CorreoElectronico
                 }).ToListAsync();
