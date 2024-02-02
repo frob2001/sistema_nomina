@@ -12,7 +12,7 @@ import { Checkbox } from 'primereact/checkbox';
 //Servicios
 import useSWR from 'swr';
 const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
-const API_BASE_URL = `${apiEndpoint}/api/Empleados`;
+const API_BASE_URL = `${apiEndpoint}/Empleado`;
 
 function EmpleadosTable(props) {
 
@@ -93,6 +93,7 @@ function EmpleadosTable(props) {
     }; // Función para el filtro global: GENERAL
     const initFilters = () => {
         setFilters({
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
             empleadoId: { value: null, matchMode: FilterMatchMode.EQUALS },
             companiaId: { value: null, matchMode: FilterMatchMode.EQUALS },
             tipoEmpleadoId: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -140,9 +141,6 @@ function EmpleadosTable(props) {
                     <Button onClick={clearFilter} className="rounded-icon-btn" type="button" rounded>
                         <i className="pi pi-filter-slash" style={{ fontSize: '0.8rem', margin: '0' }}></i>
                     </Button>
-                    <Button onClick={(e) => op.current.toggle(e)} className="rounded-icon-btn" type="button" rounded>
-                        <i className="pi pi-list" style={{ fontSize: '0.8rem', margin: '0' }}></i>
-                    </Button>
                 </div>
                 <div className="table-utility">
                     <span style={{ alignSelf: 'center', fontWeight: '400' }}><strong>Registros:</strong> {empleados ? empleados.length : '0'}</span>
@@ -168,13 +166,13 @@ function EmpleadosTable(props) {
             filterPlaceholder: "Buscar por ID de empleado",
         },
         {
-            nombrevar: "companiaId",
-            header: "ID Compañía",
+            nombrevar: "compania.nombre",
+            header: "Compañía",
             filterPlaceholder: "Buscar por ID de compañía",
         },
         {
-            nombrevar: "tipoEmpleadoId",
-            header: "ID Tipo de Empleado",
+            nombrevar: "tipoEmpleado.nombre",
+            header: "Tipo de Empleado",
             filterPlaceholder: "Buscar por tipo de empleado",
         },
         {
@@ -218,8 +216,8 @@ function EmpleadosTable(props) {
             filterPlaceholder: "Buscar por teléfono 2",
         },
         {
-            nombrevar: "tipoContratoId",
-            header: "ID Tipo de Contrato",
+            nombrevar: "tipoContrato.nombre",
+            header: "Tipo de Contrato",
             filterPlaceholder: "Buscar por tipo de contrato",
         },
         {
@@ -228,23 +226,23 @@ function EmpleadosTable(props) {
             filterPlaceholder: "Buscar por carnet IESS",
         },
         {
-            nombrevar: "ocupacionId",
-            header: "ID Ocupación",
+            nombrevar: "ocupacion.nombre",
+            header: "Ocupación",
             filterPlaceholder: "Buscar por ocupación",
         },
         {
-            nombrevar: "nivelSalarialId",
-            header: "ID Nivel Salarial",
+            nombrevar: "nivelSalarial.nombre",
+            header: "Nivel Salarial",
             filterPlaceholder: "Buscar por nivel salarial",
         },
         {
-            nombrevar: "tipoComisionId",
-            header: "ID Tipo de Comisión",
+            nombrevar: "tipoComision.nombre",
+            header: "Tipo de Comisión",
             filterPlaceholder: "Buscar por tipo de comisión",
         },
         {
-            nombrevar: "centroCostosId",
-            header: "ID Centro de Costos",
+            nombrevar: "centroCostos.nombre",
+            header: "Centro de Costos",
             filterPlaceholder: "Buscar por centro de costos",
         },
         {
@@ -263,13 +261,13 @@ function EmpleadosTable(props) {
             filterPlaceholder: "Buscar por cuenta bancaria",
         },
         {
-            nombrevar: "bancoId",
-            header: "ID Banco",
+            nombrevar: "banco.nombre",
+            header: "Banco",
             filterPlaceholder: "Buscar por banco",
         },
         {
-            nombrevar: "tipoCuentaId",
-            header: "ID Tipo de Cuenta",
+            nombrevar: "tipoCuenta.nombre",
+            header: "Tipo de Cuenta",
             filterPlaceholder: "Buscar por tipo de cuenta",
         },
         {
@@ -283,8 +281,8 @@ function EmpleadosTable(props) {
             filterPlaceholder: "Buscar por sueldo base",
         },
         {
-            nombrevar: "fondoReservaId",
-            header: "ID Fondo de Reserva",
+            nombrevar: "fondoReserva.nombre",
+            header: "Fondo de Reserva",
             filterPlaceholder: "Buscar por fondo de reserva",
         },
         {
@@ -333,6 +331,7 @@ function EmpleadosTable(props) {
                 value={empleados} // EDITABLE
                 resizableColumns
                 removableSort
+                reorderableColumns 
                 paginator
                 scrollable
                 scrollHeight={error ? '60vh' : '63vh'}
@@ -366,11 +365,11 @@ function EmpleadosTable(props) {
                         field={column.nombrevar}
                         header={column.header}
                         sortable
-                        filter
-                        filterField={column.nombrevar}
-                        filterPlaceholder={column.filterPlaceholder}
-                        filterClear={filterClearTemplate}
-                        filterApply={filterApplyTemplate}
+                        //filter
+                        //filterField={column.nombrevar}
+                        //filterPlaceholder={column.filterPlaceholder}
+                        //filterClear={filterClearTemplate}
+                        //filterApply={filterApplyTemplate}
                         style={{ minWidth: '12rem' }}
                     />
                 ))}

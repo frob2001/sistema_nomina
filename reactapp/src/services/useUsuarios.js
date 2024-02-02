@@ -1,9 +1,13 @@
 import useSWR from 'swr';
 
-const useEmpleados = () => { 
+const useUsuarios = () => {
 
     const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
-    const API_BASE_URL = `${apiEndpoint}/Empleado`; 
+    const API_BASE_URL = `${apiEndpoint}/Usuario`;
+
+    const { data, error, isValidating, isLoading, mutate } = useSWR(API_BASE_URL, fetcher, {
+        errorRetryInterval: 10000,
+    });
 
     const fetcher = async (url) => {
         const res = await fetch(url, {
@@ -71,10 +75,15 @@ const useEmpleados = () => {
     };
 
     return {
+        data,
+        isLoading,
+        error,
+        isValidating,
+        refresh: mutate,
         createObject,
         updateObject,
         deleteObject,
     };
 };
 
-export { useEmpleados }; 
+export { useUsuarios }; 

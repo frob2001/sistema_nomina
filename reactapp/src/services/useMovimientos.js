@@ -1,9 +1,9 @@
 import useSWR from 'swr';
 
-const useEmpleados = () => { 
+const useMovimientos = () => {
 
     const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
-    const API_BASE_URL = `${apiEndpoint}/Empleado`; 
+    const API_BASE_URL = `${apiEndpoint}/MovimientosPlanilla`;
 
     const fetcher = async (url) => {
         const res = await fetch(url, {
@@ -77,4 +77,4 @@ const useEmpleados = () => {
     };
 };
 
-export { useEmpleados }; 
+export { useMovimientos }; 
