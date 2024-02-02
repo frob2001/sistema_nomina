@@ -14,7 +14,7 @@ import { useUsuarios } from '../../services/useUsuarios';
 // Auth
 const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
 
-function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorreoElectronico }) { //EDITABLE
+function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedUsuarioId }) { //EDITABLE
 
     const fetcher = async (url) => {
         const res = await fetch(url, {
@@ -38,50 +38,42 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
     const { createObject, updateObject, deleteObject } = useUsuarios(); // Servicio necesario para crear el objeto
     const toast = useRef(null); // Referencia para el toast
 
-    const { data: usuarioData } = useSWR(`${apiEndpoint}/Usuario/Info/${selectedCorreoElectronico}`, fetcher); 
-    const { data: companias, error, isLoading, isValidating, refresh } = useGestionService('Compania');
-    const { data: empleados } = useGestionService('Empleado');
-    const { data: conceptos } = useGestionService('Concepto');
-    const { data: tiposOperaciones } = useGestionService('TipoOperacion');
+    const { data: usuarioData } = useSWR(`${apiEndpoint}/Usuario/Info/${selectedUsuarioId}`, fetcher); 
+    const { data: emisores, error, isLoading, isValidating, refresh } = useGestionService('Emisor');
+    const { data: sucursales } = useGestionService('Sucursal');
     
     // --------------- Estados que no requieren persistencia --------------------------------------------
 
     const [isLoading2, setIsLoading2] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false); // Para los dropdowns
-    const defaultNewMovimiento = {}; 
+    const defaultNewUsuario = {}; 
     const defaultRequiredFields = {
-        companiaId: false,
-        empleadoId: false,
-        conceptoId: false,
-        ano: false,
-        mes: false,
-        importe: false,
-        tipoOperacionId: false,
+        nombre: false,
+        correoElectronico: false,
+        contrasena: false,
+        emisorId: false,
+        sucursalId: false,
     };
  
     // --------------- Estados que requieren persistencia --------------------------------------------
 
-    const [selectedCompania, setSelectedCompania] = useState(null);
-    const [selectedEmpleado, setSelectedEmpleado] = useState(null);
-    const [selectedConcepto, setSelectedConcepto] = useState(null);
-    const [selectedTipoOperacion, setSelectedTipoOperacion] = useState(null);
+    const [selectedEmisor, setSelectedEmisor] = useState(null);
+    const [selectedSucursal, setSelectedSucursal] = useState(null);
 
     // Lógica general
-    const [newMovimiento, setNewMovimiento] = useState(defaultNewMovimiento);// mapea el objeto: ESPECIFICO
+    const [newUsuario, setNewUsuario] = useState(defaultNewUsuario);// mapea el objeto: ESPECIFICO
     const [isAnyEmpty, setisAnyEmpty] = useState(false); //Saber si hay campos vacíos: GENERAL
     const [requiredFields, setRequiredFields] = useState(defaultRequiredFields); // mapea los inputs requeridos: GENERAL
     const [activeIndex, setActiveIndex] = useState(0); // Conoce el indice de tab activo para el tabview
 
     useEffect(() => {
-        if (selectedCorreoElectronico && usuarioData) { // Checks if empleadoId prop is provided and usuarioData is loaded
-            setNewMovimiento(usuarioData); // Sets the employee data
+        if (selectedUsuarioId && usuarioData) { // Checks if empleadoId prop is provided and usuarioData is loaded
+            setNewUsuario(usuarioData); // Sets the employee data
 
-            setSelectedCompania(companias?.find(comp => comp.companiaId === usuarioData.compania.companiaId));
-            setSelectedEmpleado(empleados?.find(emp => emp.empleadoId === usuarioData.empleado.empleadoId));
-            setSelectedConcepto(conceptos?.find(con => con.conceptoId === usuarioData.concepto.conceptoId));
-            setSelectedTipoOperacion(tiposOperaciones?.find(tipo => tipo.tipoOperacionId === usuarioData.tipoOperacion.tipoOperacionId));
+            setSelectedEmisor(emisores?.find(em => em.emisorId === usuarioData.emisor.emisorId));
+            setSelectedSucursal(sucursales?.find(suc => suc.sucursalId === usuarioData.sucursal.sucursalId));
         }
-    }, [newMovimiento, selectedCorreoElectronico, usuarioData, companias, empleados, conceptos, tiposOperaciones]);
+    }, [newUsuario, selectedUsuarioId, usuarioData, emisores, sucursales]);
 
     // ------------------ Dropdowns normales ---------------------------------------
     const refreshData = (e) => {
@@ -116,26 +108,6 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
         return <span>{props.placeholder}</span>;
     }; //EDITABLE: template para mostrar el valor seleccionado de un dropdown
 
-    const optionTemplateE = (option) => {
-        return (
-            <div className="dropdown-item-container">
-                <span>{option.nombres} {option.apellidoPaterno} {option.apellidoMaterno}</span>
-            </div>
-        );
-    }; // EDITABLE: template para mostrar las opciones de un dropdown
-
-    const selectedValueTemplateE = (option, props) => {
-        if (option) {
-            return (
-                <div className="dropdown-item-container">
-                    <span>{option.nombres} {option.apellidoPaterno} {option.apellidoMaterno}</span>
-                </div>
-            );
-        }
-
-        return <span>{props.placeholder}</span>;
-    }; //EDITABLE: template para mostrar el valor seleccionado de un dropdown
-
     const handleInputChange = (e) => {
         const { name, type, value, checked } = e.target;
         const inputValue = type === 'checkbox' ? checked : value; // Use value for text inputs, and checked for checkboxes
@@ -144,7 +116,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
             updatedRequiredFields[name] = false;
             setRequiredFields(updatedRequiredFields);
         } // Check if the input name is a key in the requiredFields
-        setNewMovimiento(prev => ({ ...prev, [name]: inputValue })); // Update the newCliente state with the new value for text inputs
+        setNewUsuario(prev => ({ ...prev, [name]: inputValue })); // Update the newCliente state with the new value for text inputs
     }; // Maneja el cambio para un tag de input
 
     const isEmptyValue = value => {
@@ -177,7 +149,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
     const handleDelete = async (e) => {
         try {
             setIsLoading2(true);
-            const response = await deleteObject(selectedCorreoElectronico);
+            const response = await deleteObject(selectedUsuarioId);
             if (response.status === 204) {
                 onDeleted()
                 onClose();
@@ -198,7 +170,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
         e.preventDefault();
 
         // Verificar si existe algun campo requerido vacío
-        const anyFieldEmpty = validateRequiredFields(newMovimiento);
+        const anyFieldEmpty = validateRequiredFields(newUsuario);
         console.log('Valores vacíos');
 
         if (anyFieldEmpty) {
@@ -215,7 +187,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
         try {
             setIsLoading2(true);
 
-            const response = await createObject(newMovimiento); 
+            const response = await createObject(newUsuario); 
             status = response.status;
             data = response.data;
 
@@ -249,7 +221,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
         e.preventDefault();
 
         // Verificar si existe algun campo requerido vacío
-        const anyFieldEmpty = validateRequiredFields(newMovimiento);
+        const anyFieldEmpty = validateRequiredFields(newUsuario);
 
         if (anyFieldEmpty) {
             setisAnyEmpty(true);
@@ -265,7 +237,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
         try {
             setIsLoading2(true);
 
-            const response = await updateObject(newMovimiento);
+            const response = await updateObject(newUsuario);
             status = response.status;
             data = response.data;
 
@@ -296,13 +268,11 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
     }; // Maneja la creación del objeto: ESPECIFICO
 
     const resetStates = () => {
-        setSelectedCompania(null);
-        setSelectedConcepto(null);
-        setSelectedEmpleado(null);
-        setSelectedTipoOperacion(null);
+        setSelectedEmisor(null);
+        setSelectedSucursal(null);
 
         // Lógica general
-        setNewMovimiento(defaultNewMovimiento);
+        setNewUsuario(defaultNewUsuario);
         setisAnyEmpty(false);
         setRequiredFields(defaultRequiredFields);
         setActiveIndex(0);
@@ -317,14 +287,14 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
     return (
         <>
             <Draggable cancel="input, button, textarea, table" bounds="parent">
-                <div className="form-container wider-form">
+                <div className="form-container wider-form" style={{ height: '500px' }} >
                     {(isLoading2) &&
                         <div className="spinner-container">
                             <div className="spinner" />
                         </div>
                     }
                     <section className="form-header">
-                        <span>{ selectedCorreoElectronico ? 'Editar trabajador' : 'Nuevo trabajador' }</span> 
+                        <span>{ selectedUsuarioId ? 'Editar usuario' : 'Nuevo usuario' }</span> 
                         <div className="form-header-buttons">
                             <Button className="form-header-btn" onClick={handleCancel}>
                                 <i className="pi pi-times" style={{ fontSize: '0.6rem', color: 'var(--secondary-blue)', fontWeight: '600' }}></i>
@@ -333,19 +303,19 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
                     </section>
                
                     <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                        <TabPanel header="Movimiento de planilla" leftIcon="pi pi-arrow-right-arrow-left mr-2">
+                        <TabPanel header="Usuario" leftIcon="pi pi-user mr-2">
                             <div className="form-body form-body--create">
                                 <section>
                                     <div className="form-group-label">
                                         <i className="pi pi-info-circle"></i>
-                                        <label>Información del movimiento</label>
+                                        <label>Información del usuario</label>
                                     </div>
                                     <div className="form-body-group">
                                         <div className="form-group form-group-double">
-                                            <label> Tipo de operación <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <label> Emisor <small className="requiredAsterisk">(Obligatorio)</small></label>
                                             <div>
                                                 {
-                                                    error || !tiposOperaciones ? (
+                                                    error || !emisores ? (
                                                         <div className="dropdown-error">
                                                             <div className="dropdown-error-msg">
                                                                 {isLoading || (isRefreshing && isValidating) ?
@@ -358,21 +328,21 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
                                                         </div>
                                                     ) : (
                                                         <Dropdown
-                                                            className={`${requiredFields.tipoOperacionId && 'form-group-empty'}`}
+                                                            className={`${requiredFields.emisorId && 'form-group-empty'}`}
                                                             style={{ width: '100%' }}
-                                                            value={selectedTipoOperacion}
+                                                            value={selectedEmisor}
                                                             onChange={(e) => {
-                                                                setSelectedTipoOperacion(e.value);
-                                                                if (e.value && e.value.tipoOperacionId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
+                                                                setSelectedEmisor(e.value);
+                                                                if (e.value && e.value.emisorId !== undefined) {
+                                                                    setNewUsuario(prevState => ({
                                                                         ...prevState,
-                                                                        tipoOperacionId: e.value.tipoOperacionId
+                                                                        emisorId: e.value.emisorId
                                                                     }));
                                                                 }
                                                             }}
-                                                            options={tiposOperaciones}
+                                                            options={emisores}
                                                             optionLabel="nombre"
-                                                            placeholder="Selecciona un tipo de operación"
+                                                            placeholder="Selecciona un emisor"
                                                             filter
                                                             virtualScrollerOptions={{ itemSize: 38 }}
                                                             valueTemplate={selectedValueTemplate}
@@ -383,10 +353,10 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
                                             </div>
                                         </div>
                                         <div className="form-group form-group-double">
-                                            <label> Compañía <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <label> Sucursal <small className="requiredAsterisk">(Obligatorio)</small></label>
                                             <div>
                                                 {
-                                                    error || !companias ? (
+                                                    error || !sucursales ? (
                                                         <div className="dropdown-error">
                                                             <div className="dropdown-error-msg">
                                                                 {isLoading || (isRefreshing && isValidating) ?
@@ -399,104 +369,21 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
                                                         </div>
                                                     ) : (
                                                         <Dropdown
-                                                            className={`${requiredFields.companiaId && 'form-group-empty'}`}
+                                                            className={`${requiredFields.sucursalId && 'form-group-empty'}`}
                                                             style={{ width: '100%' }}
-                                                            value={selectedCompania}
+                                                            value={selectedSucursal}
                                                             onChange={(e) => {
-                                                                setSelectedCompania(e.value);
-                                                                if (e.value && e.value.companiaId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
+                                                                setSelectedSucursal(e.value);
+                                                                if (e.value && e.value.sucursalId !== undefined) {
+                                                                    setNewUsuario(prevState => ({
                                                                         ...prevState,
-                                                                        companiaId: e.value.companiaId
+                                                                        sucursalId: e.value.sucursalId
                                                                     }));
                                                                 }
                                                             }}
-                                                            options={companias}
+                                                            options={sucursales}
                                                             optionLabel="nombre"
-                                                            placeholder="Selecciona una compañía"
-                                                            filter
-                                                            virtualScrollerOptions={{ itemSize: 38 }}
-                                                            valueTemplate={selectedValueTemplate}
-                                                            itemTemplate={optionTemplate}
-                                                        />
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className="form-group form-group-double">
-                                            <label> Trabajador <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <div>
-                                                {
-                                                    error || !empleados ? (
-                                                        <div className="dropdown-error">
-                                                            <div className="dropdown-error-msg">
-                                                                {isLoading || (isRefreshing && isValidating) ?
-                                                                    <div className="small-spinner" /> :
-                                                                    <span>Ocurrió un error: sin opciones disponibles</span>}
-                                                            </div>
-                                                            <Button className="rounded-icon-btn" onClick={refreshData}>
-                                                                <i className="pi pi-refresh" style={{ fontSize: '0.8rem', margin: '0' }}></i>
-                                                            </Button>
-                                                        </div>
-                                                    ) : (
-                                                        <Dropdown
-                                                            className={`${requiredFields.empleadoId && 'form-group-empty'}`}
-                                                            style={{ width: '100%' }}
-                                                            value={selectedEmpleado}
-                                                            onChange={(e) => {
-                                                                setSelectedEmpleado(e.value);
-                                                                if (e.value && e.value.empleadoId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
-                                                                        ...prevState,
-                                                                        empleadoId: e.value.empleadoId
-                                                                    }));
-                                                                }
-                                                            }}
-                                                            options={empleados}
-                                                            optionLabel="nombres"
-                                                            placeholder="Selecciona un trabajador"
-                                                            filter
-                                                            filterBy="nombres,apellidoMaterno,apellidoPaterno"
-                                                            virtualScrollerOptions={{ itemSize: 38 }}
-                                                            valueTemplate={selectedValueTemplateE}
-                                                            itemTemplate={optionTemplateE}
-                                                        />
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className="form-group form-group-double">
-                                            <label> Concepto <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <div>
-                                                {
-                                                    error || !conceptos ? (
-                                                        <div className="dropdown-error">
-                                                            <div className="dropdown-error-msg">
-                                                                {isLoading || (isRefreshing && isValidating) ?
-                                                                    <div className="small-spinner" /> :
-                                                                    <span>Ocurrió un error: sin opciones disponibles</span>}
-                                                            </div>
-                                                            <Button className="rounded-icon-btn" onClick={refreshData}>
-                                                                <i className="pi pi-refresh" style={{ fontSize: '0.8rem', margin: '0' }}></i>
-                                                            </Button>
-                                                        </div>
-                                                    ) : (
-                                                        <Dropdown
-                                                            className={`${requiredFields.conceptoId && 'form-group-empty'}`}
-                                                            style={{ width: '100%' }}
-                                                            value={selectedConcepto}
-                                                            onChange={(e) => {
-                                                                setSelectedConcepto(e.value);
-                                                                if (e.value && e.value.conceptoId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
-                                                                        ...prevState,
-                                                                        conceptoId: e.value.conceptoId
-                                                                    }));
-                                                                }
-                                                            }}
-                                                            options={conceptos}
-                                                            optionLabel="nombre"
-                                                            placeholder="Selecciona un concepto"
+                                                            placeholder="Selecciona una sucursal"
                                                             filter
                                                             virtualScrollerOptions={{ itemSize: 38 }}
                                                             valueTemplate={selectedValueTemplate}
@@ -507,16 +394,16 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
                                             </div>
                                         </div>
                                         <div className="form-group">
-                                            <label> Año <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.ano && 'form-group-empty'}`} type="number" name="ano" value={newMovimiento.ano || ''} onChange={handleInputChange}  />
+                                            <label> Nombre <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <input className={`${requiredFields.nombre && 'form-group-empty'}`} type="text" name="nombre" value={newUsuario.nombre || ''} onChange={handleInputChange} maxLength="70" placeholder="Nombre del usuario" />
                                         </div> 
                                         <div className="form-group">
-                                            <label> Mes <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.mes && 'form-group-empty'}`} type="number" name="mes" value={newMovimiento.mes || ''} onChange={handleInputChange} />
+                                            <label> Correo electrónico <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <input className={`${requiredFields.correoElectronico && 'form-group-empty'}`} type="text" name="correoElectronico" value={newUsuario.correoElectronico || ''} onChange={handleInputChange} maxLength="70" placeholder="Correo de acceso para el usuario" />
                                         </div> 
                                         <div className="form-group">
-                                            <label> Importe <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.importe && 'form-group-empty'}`} type="number" name="importe" value={newMovimiento.importe || ''} onChange={handleInputChange} />
+                                            <label> Contraseña <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <input className={`${requiredFields.contrasena && 'form-group-empty'}`} type="password" name="contrasena" value={newUsuario.contrasena || ''} onChange={handleInputChange} maxLength="70" placeholder="Contraseña" />
                                         </div> 
                                     </div>
                                 </section>
@@ -535,7 +422,7 @@ function UsuariosCreate({ onClose, onCreated, onEdited, onDeleted, selectedCorre
                             </div>
                         }
                         {
-                            selectedCorreoElectronico ? 
+                            selectedUsuarioId ? 
                             <div>
                                 <button style={{marginRight: '5px'}} onClick={confirmDeletion} className="form-delete-btn">Eliminar</button>
                                 <button type="submit" className="form-accept-btn" onClick={handleEdit}>Editar</button>

@@ -94,6 +94,7 @@ function UsuariosTable(props) {
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
             nombre: { value: null, matchMode: FilterMatchMode.EQUALS },
             correoElectronico: { value: null, matchMode: FilterMatchMode.EQUALS },
+            usuarioId: { value: null, matchMode: FilterMatchMode.EQUALS },
         }); // EDITABLE
         setGlobalFilterValue('');
     };
@@ -132,6 +133,10 @@ function UsuariosTable(props) {
     const header = renderHeader(); // Renderizar el header: GENERAL
     const columnsData = [
         {
+            nombrevar: "usuarioId",
+            header: "Id del Usuario",
+            filterPlaceholder: "Buscar por ID",
+        }, {
             nombrevar: "nombre",
             header: "Nombre",
             filterPlaceholder: "Buscar por nombre",
@@ -144,7 +149,7 @@ function UsuariosTable(props) {
     ]; // Contiene los parámetros para crear columnas: ESPECIFICO
 
     const onRowSelect = (event) => {
-        props.onSelect(event.data.correoElectronico); // EDITABLE
+        props.onSelect(event.data.usuarioId); // EDITABLE
     }; // maneja la selección de la fila: ESPECIFICO
 
     /* ----------------------- Fin Overlay setup ------------------------------------------------*/
@@ -174,11 +179,12 @@ function UsuariosTable(props) {
                 rows={25}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 size="small"
-                dataKey="correoElectronico" // EDITABLE
+                dataKey="usuarioId" // EDITABLE
                 filters={filters}
                 globalFilterFields={[
                     'nombre',
                     'correoElectronico',
+                    'usuarioId'
                 ]} 
                 header={header}
                 emptyMessage="No se encontraron usuarios" // EDITABLE

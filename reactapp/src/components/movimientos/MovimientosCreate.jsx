@@ -317,14 +317,14 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
     return (
         <>
             <Draggable cancel="input, button, textarea, table" bounds="parent">
-                <div className="form-container wider-form">
+                <div className="form-container wider-form" style={{ height: '500px' }}>
                     {(isLoading2) &&
                         <div className="spinner-container">
                             <div className="spinner" />
                         </div>
                     }
                     <section className="form-header">
-                        <span>{ selectedMovimientoId ? 'Editar trabajador' : 'Nuevo trabajador' }</span> 
+                        <span>{ selectedMovimientoId ? 'Editar movimiento de planilla' : 'Nuevo movimiento de planilla' }</span> 
                         <div className="form-header-buttons">
                             <Button className="form-header-btn" onClick={handleCancel}>
                                 <i className="pi pi-times" style={{ fontSize: '0.6rem', color: 'var(--secondary-blue)', fontWeight: '600' }}></i>

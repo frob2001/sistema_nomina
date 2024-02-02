@@ -2,6 +2,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import UsuariosTable from './UsuariosTable';
+import UsuariosCreate from './UsuariosCreate';
 
 
 function UsuariosPage() {
@@ -55,11 +56,11 @@ function UsuariosPage() {
                     </button>
                 </div>
                 <div className="page-table">
-                    <UsuariosTable onClose={() => setIsViewing(false)} onSelect={(correoElectronico) => { setIsViewing(true); setIdSelected(correoElectronico); }} />
+                    <UsuariosTable onClose={() => setIsViewing(false)} onSelect={(usuarioId) => { setIsViewing(true); setIdSelected(usuarioId); }} />
                 </div>
             </div>
-            {/*isCreating && <MovimientosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
-            {isViewing && <MovimientosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedMovimientoId={idSelected} />*/}
+            {isCreating && <UsuariosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
+            {isViewing && <UsuariosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedUsuarioId={idSelected} />}
         </>
     );
 }

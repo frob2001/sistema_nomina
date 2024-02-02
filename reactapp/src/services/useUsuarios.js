@@ -5,10 +5,6 @@ const useUsuarios = () => {
     const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
     const API_BASE_URL = `${apiEndpoint}/Usuario`;
 
-    const { data, error, isValidating, isLoading, mutate } = useSWR(API_BASE_URL, fetcher, {
-        errorRetryInterval: 10000,
-    });
-
     const fetcher = async (url) => {
         const res = await fetch(url, {
             headers: {
@@ -25,6 +21,10 @@ const useUsuarios = () => {
 
         return res.json();
     };
+
+    const { data, error, isValidating, isLoading, mutate } = useSWR(API_BASE_URL, fetcher, {
+        errorRetryInterval: 10000,
+    });
 
     const createObject = async (obj) => {
         try {
