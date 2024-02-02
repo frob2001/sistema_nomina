@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 import { TabView, TabPanel } from 'primereact/tabview';
+import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 import useSWR from 'swr';
 
 // Servicios
@@ -13,7 +14,7 @@ import { useEmpleados } from '../../services/useEmpleados';
 // Auth
 const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
 
-function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) { //EDITABLE
+function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpleadoId }) { //EDITABLE
 
     const fetcher = async (url) => {
         const res = await fetch(url, {
@@ -34,10 +35,10 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
 
     // --------------- Setup (Servicios, Contextos, Referencias) -----------------------------------
 
-    const { createObject, updateObject } = useEmpleados(); // Servicio necesario para crear el objeto
+    const { createObject, updateObject, deleteObject } = useEmpleados(); // Servicio necesario para crear el objeto
     const toast = useRef(null); // Referencia para el toast
 
-    const { data: empleadoData } = useSWR(`${apiEndpoint}/api/Empleados/${selectedEmpleadoId}`, fetcher); 
+    const { data: empleadoData } = useSWR(`${apiEndpoint}/Empleado/${selectedEmpleadoId}`, fetcher); 
     const { data: companias, error, isLoading, isValidating, refresh } = useGestionService('Compania');
     const { data: tiposEmpleados } = useGestionService('TipoEmpleado');
     const { data: tiposContratos } = useGestionService('TipoContrato');
@@ -79,7 +80,6 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
         bonificacion: false,
         sueldoBase: false,
         fondoReservaId: false,
-        reingreso: false,
         fechaReingreso: false,
         formaCalculo13: false,
         formaCalculo14: false
@@ -113,22 +113,21 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
         if (selectedEmpleadoId && empleadoData) { // Checks if empleadoId prop is provided and empleadoData is loaded
             setNewEmpleado(empleadoData); // Sets the employee data
 
-            setSelectedCompania(companias?.find(comp => comp.companiaId === empleadoData.companiaId));
-            setSelectedTipoEmpleado(tiposEmpleados?.find(tipo => tipo.tipoEmpleadoId === empleadoData.tipoEmpleadoId));
-            setSelectedTipoContrato(tiposContratos?.find(tipo => tipo.tipoContratoId === empleadoData.tipoContratoId));
-            setSelectedOcupacion(ocupaciones?.find(ocupacion => ocupacion.ocupacionId === empleadoData.ocupacionId));
-            setSelectedNivelSalarial(nivelesSalariales?.find(nivel => nivel.nivelSalarialId === empleadoData.nivelSalarialId));
-            setSelectedTipoComision(tiposComisiones?.find(tipo => tipo.tipoComisionId === empleadoData.tipoComisionId));
-            setSelectedCentroCosto(centrosDeCostos?.find(centro => centro.centroCostoId === empleadoData.centroCostosId));
-            setSelectedBanco(bancos?.find(banco => banco.bancoId === empleadoData.bancoId));
-            setSelectedTipoCuenta(tiposCuentas?.find(tipo => tipo.tipoCuentaId === empleadoData.tipoCuentaId));
-            setSelectedFondoReserva(fondosReservas?.find(fondo => fondo.fondoReservaId === empleadoData.fondoReservaId));
-            setSelectedReingreso(reingresoOptions?.find(op => op.value === empleadoData.reingreso));
+            setSelectedCompania(companias?.find(comp => comp.companiaId === empleadoData.compania.companiaId));
+            setSelectedTipoEmpleado(tiposEmpleados?.find(tipo => tipo.tipoEmpleadoId === empleadoData.tipoEmpleado.tipoEmpleadoId));
+            setSelectedTipoContrato(tiposContratos?.find(tipo => tipo.tipoContratoId === empleadoData.tipoContrato.tipoContratoId));
+            setSelectedOcupacion(ocupaciones?.find(ocupacion => ocupacion.ocupacionId === empleadoData.ocupacion.ocupacionId));
+            setSelectedNivelSalarial(nivelesSalariales?.find(nivel => nivel.nivelSalarialId === empleadoData.nivelSalarial.nivelSalarialId));
+            setSelectedTipoComision(tiposComisiones?.find(tipo => tipo.tipoComisionId === empleadoData.tipoComision.tipoComisionId));
+            setSelectedCentroCosto(centrosDeCostos?.find(centro => centro.centroCostoId === empleadoData.centroCostos.centroCostoId));
+            setSelectedBanco(bancos?.find(banco => banco.bancoId === empleadoData.banco.bancoId));
+            setSelectedTipoCuenta(tiposCuentas?.find(tipo => tipo.tipoCuentaId === empleadoData.tipoCuenta.tipoCuentaId));
+            setSelectedFondoReserva(fondosReservas?.find(fondo => fondo.fondoReservaId === empleadoData.fondoReserva.fondoReservaId));
+            setSelectedReingreso(reingresoOptions?.find(op => op.value === empleadoData.reingreso)); // Pendiente
         }
-    }, [selectedEmpleadoId, empleadoData, companias, tiposEmpleados, tiposContratos, ocupaciones, nivelesSalariales, tiposComisiones, centrosDeCostos, bancos, tiposCuentas, fondosReservas]);
+    }, [newEmpleado, selectedEmpleadoId, empleadoData, companias, tiposEmpleados, tiposContratos, ocupaciones, nivelesSalariales, tiposComisiones, centrosDeCostos, bancos, tiposCuentas, fondosReservas]);
 
     // ------------------ Dropdowns normales ---------------------------------------
-
     const refreshData = (e) => {
         e.preventDefault();
         setIsRefreshing(true);
@@ -189,11 +188,42 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
         return Object.values(updatedRequiredFields).some(value => value); // Return true if any of the required fields is empty
     }; // Valida que los campos en REQUIRED_FIELDS no estén vacíos en el nuevo objeto
 
+    const confirmDeletion = (event) => {
+        confirmPopup({
+            target: event.currentTarget,
+            message: '¿Estás seguro? Esta acción es irreversible',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: handleDelete
+        });
+    }; // Maneja la confirmación para eliminar o no: GENERAL
+
+    const handleDelete = async (e) => {
+        try {
+            setIsLoading2(true);
+            const response = await deleteObject(selectedEmpleadoId);
+            if (response.status === 204) {
+                onDeleted()
+                onClose();
+            }
+        } catch (error) {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Hubo un error al eliminar el registro',
+                life: 3000,
+            });
+        } finally {
+            setIsLoading2(false);
+        }
+    }; // Maneja la eliminación del objeto: ESPECIFICO
+
     const handleCreate = async (e) => {
         e.preventDefault();
 
         // Verificar si existe algun campo requerido vacío
         const anyFieldEmpty = validateRequiredFields(newEmpleado);
+        console.log('Valores vacíos');
 
         if (anyFieldEmpty) {
             setisAnyEmpty(true);
@@ -217,7 +247,7 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
                 toast.current.show({
                     severity: 'success',
                     summary: 'Proceso exitoso',
-                    detail: `Registro creado con ID: ${data?.empleadoId}`, // EDITABLE
+                    detail: `Registro creado`, // EDITABLE
                     sticky: true,
                 });
                 resetStates();
@@ -702,12 +732,13 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
                                                     value={selectedReingreso}
                                                     onChange={(e) => {
                                                         setSelectedReingreso(e.value);
-                                                        if (e.value && e.value.value !== undefined) {
+                                                        if (e.value !== undefined) {
                                                             setNewEmpleado(prevState => ({
                                                                 ...prevState,
-                                                                reingreso: e.value.value
+                                                                reingreso: e.value
                                                             }));
-                                                        }
+                                                        };
+                                                        console.log(e.value)
                                                     }}
                                                     options={reingresoOptions}
                                                     optionLabel="nombre"
@@ -892,13 +923,18 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, selectedEmpleadoId }) {
                         }
                         {
                             selectedEmpleadoId ? 
-                            <button type="submit" className="form-accept-btn" onClick={handleEdit}>Editar</button> :
+                            <div>
+                                <button style={{marginRight: '5px'}} onClick={confirmDeletion} className="form-delete-btn">Eliminar</button>
+                                <button type="submit" className="form-accept-btn" onClick={handleEdit}>Editar</button>
+                            </div>
+                             :
                             <button type="submit" className="form-accept-btn" onClick={handleCreate}>Crear</button>
                         }
                         
                     </section>
                 </div>
             </Draggable>
+            <ConfirmPopup />
             <Toast ref={toast} />
         </>
     );

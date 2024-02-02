@@ -1,11 +1,11 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import EmpleadosTable from './EmpleadosTable';
-import EmpleadosCreate from './EmpleadosCreate';
+import MovimientosTable from './MovimientosTable';
+import MovimientosCreate from './MovimientosCreate';
 
 
-function EmpleadosPage() {
+function MovimientosPage() {
 
     // --------------- Setup (Servicios, Contextos, Referencias) -----------------------------------
 
@@ -48,7 +48,7 @@ function EmpleadosPage() {
         <>
             <Toast ref={toast} />
             <div className="page-container">
-                <h5 className="page-title">Trabajadores</h5>
+                <h5 className="page-title">Movimientos de planilla</h5>
                 <div className="page-options">
                     <button className="btn-page-options" onClick={toggleCreate}>
                         <i className="pi pi-plus" style={{ fontSize: '0.8rem', margin: '0' }}></i>
@@ -56,13 +56,13 @@ function EmpleadosPage() {
                     </button>
                 </div>
                 <div className="page-table">
-                    <EmpleadosTable onClose={() => setIsViewing(false)} onSelect={(empleadoId) => { setIsViewing(true); setIdSelected(empleadoId); }} />
+                    <MovimientosTable onClose={() => setIsViewing(false)} onSelect={(movimientoId) => { setIsViewing(true); setIdSelected(movimientoId); }} />
                 </div>
             </div>
-            {isCreating && <EmpleadosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
-            {isViewing && <EmpleadosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedEmpleadoId={idSelected} />}
+            {isCreating && <MovimientosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
+            {isViewing && <MovimientosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedMovimientoId={idSelected} />}
         </>
     );
 }
 
-export default EmpleadosPage;
+export default MovimientosPage;
