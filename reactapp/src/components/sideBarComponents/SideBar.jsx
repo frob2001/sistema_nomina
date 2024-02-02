@@ -15,9 +15,9 @@ function SideBar(props) {
     const dispatch = useDispatch();
 
     const groups = [
-        { name: "empleados", text: "Empleados", index: 0, subItems: ["Empleados"] },
+        { name: "trabajadores", text: "Trabajadores", index: 0, subItems: ["Trabajadores"] },
         { name: "usuarios", text: "Usuarios", index: 1, subItems: ["Usuarios"] },
-        { name: "movimientos", text: "Movientos", index: 2, subItems: ["Movimientos de planilla"] },
+        { name: "movimientos", text: "Movimientos", index: 2, subItems: ["Movimientos de planilla"] },
         { name: "rolpagos", text: "Roles", index: 3, subItems: ["Rol de pagos"] },
         {
             name: "gestion", text: "Gestión", index: 4, subItems: [

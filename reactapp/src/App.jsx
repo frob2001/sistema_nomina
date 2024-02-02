@@ -22,6 +22,7 @@ import pagesContext from './context/pagesContext';
 
 import { AuthContext, kc } from './context/authContext';
 import LoginPage from './components/loginPageComponents/LoginPage';
+import EmpleadosPage from './components/empleados/EmpleadosPage';
 
 const App = () => {
 
@@ -95,6 +96,7 @@ const App = () => {
                                             {pages['Bancos'] && <GestionPagesSuperComponent pageOption="bancos" pageTitle="Bancos" />}
                                             {pages['Fondos de reserva'] && <GestionPagesSuperComponent pageOption="fondosReserva" pageTitle="Fondos de Reserva" />}
                                             {pages['Conceptos'] && <GestionPagesSuperComponent pageOption="conceptos" pageTitle="Conceptos" />}
+                                            {pages['Trabajadores'] && <EmpleadosPage />}
                                         </>
                                     )}
                                 </div>
