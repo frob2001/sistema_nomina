@@ -2,6 +2,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import UsuariosTable from './UsuariosTable';
+import UsuariosCreate from './UsuariosCreate';
 
 
 function UsuariosPage() {
@@ -47,7 +48,7 @@ function UsuariosPage() {
         <>
             <Toast ref={toast} />
             <div className="page-container">
-                <h5 className="page-title">Movimientos de planilla</h5>
+                <h5 className="page-title">Usuarios del sistema</h5>
                 <div className="page-options">
                     <button className="btn-page-options" onClick={toggleCreate}>
                         <i className="pi pi-plus" style={{ fontSize: '0.8rem', margin: '0' }}></i>
@@ -55,11 +56,11 @@ function UsuariosPage() {
                     </button>
                 </div>
                 <div className="page-table">
-                    <UsuariosTable onClose={() => setIsViewing(false)} onSelect={(correoElectronico) => { setIsViewing(true); setIdSelected(correoElectronico); }} />
+                    <UsuariosTable onClose={() => setIsViewing(false)} onSelect={(usuarioId) => { setIsViewing(true); setIdSelected(usuarioId); }} />
                 </div>
             </div>
-            {/*isCreating && <MovimientosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
-            {isViewing && <MovimientosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedMovimientoId={idSelected} />*/}
+            {isCreating && <UsuariosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
+            {isViewing && <UsuariosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedUsuarioId={idSelected} />}
         </>
     );
 }

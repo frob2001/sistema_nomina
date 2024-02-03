@@ -74,14 +74,20 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
 
     useEffect(() => {
         if (selectedMovimientoId && movimientoData) { // Checks if empleadoId prop is provided and movimientoData is loaded
-            setNewMovimiento(movimientoData); // Sets the employee data
+            setNewMovimiento({
+                ...movimientoData,
+                companiaId: companias?.find(comp => comp.companiaId === movimientoData.compania.companiaId).companiaId,
+                empleadoId: empleados?.find(emp => emp.empleadoId === movimientoData.empleado.empleadoId).empleadoId,
+                conceptoId: conceptos?.find(con => con.conceptoId === movimientoData.concepto.conceptoId).conceptoId,
+                tipoOperacionId: tiposOperaciones?.find(tipo => tipo.tipoOperacionId === movimientoData.tipoOperacion.tipoOperacionId).tipoOperacionId,
+            }); // Sets the employee data
 
             setSelectedCompania(companias?.find(comp => comp.companiaId === movimientoData.compania.companiaId));
             setSelectedEmpleado(empleados?.find(emp => emp.empleadoId === movimientoData.empleado.empleadoId));
             setSelectedConcepto(conceptos?.find(con => con.conceptoId === movimientoData.concepto.conceptoId));
             setSelectedTipoOperacion(tiposOperaciones?.find(tipo => tipo.tipoOperacionId === movimientoData.tipoOperacion.tipoOperacionId));
         }
-    }, [newMovimiento, selectedMovimientoId, movimientoData, companias, empleados, conceptos, tiposOperaciones]);
+    }, [/*newMovimiento*/, selectedMovimientoId, movimientoData, companias, empleados, conceptos, tiposOperaciones]);
 
     // ------------------ Dropdowns normales ---------------------------------------
     const refreshData = (e) => {
@@ -265,18 +271,27 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
         try {
             setIsLoading2(true);
 
-            const response = await updateObject(newMovimiento);
+            const newMovimientoFinal = {
+                "companiaId": newMovimiento.companiaId,
+                "empleadoId": newMovimiento.empleadoId,
+                "conceptoId": newMovimiento.conceptoId,
+                "ano": newMovimiento.ano,
+                "mes": newMovimiento.mes,
+                "importe": newMovimiento.importe,
+                "tipoOperacionId": newMovimiento.tipoOperacionId,
+            }
+
+            const response = await updateObject(selectedMovimientoId,newMovimientoFinal);
             status = response.status;
             data = response.data;
 
-            if (status === 201) {
+            if (status === 204) {
                 toast.current.show({
                     severity: 'success',
                     summary: 'Proceso exitoso',
                     detail: `Registro editado con éxito`, // EDITABLE
                     sticky: true,
                 });
-                resetStates();
                 onEdited();
             } else {
                 throw new Error(`Error en la edición`);
@@ -317,14 +332,14 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
     return (
         <>
             <Draggable cancel="input, button, textarea, table" bounds="parent">
-                <div className="form-container wider-form">
+                <div className="form-container wider-form" style={{ height: '500px' }}>
                     {(isLoading2) &&
                         <div className="spinner-container">
                             <div className="spinner" />
                         </div>
                     }
                     <section className="form-header">
-                        <span>{ selectedMovimientoId ? 'Editar trabajador' : 'Nuevo trabajador' }</span> 
+                        <span>{ selectedMovimientoId ? 'Editar movimiento de planilla' : 'Nuevo movimiento de planilla' }</span> 
                         <div className="form-header-buttons">
                             <Button className="form-header-btn" onClick={handleCancel}>
                                 <i className="pi pi-times" style={{ fontSize: '0.6rem', color: 'var(--secondary-blue)', fontWeight: '600' }}></i>
