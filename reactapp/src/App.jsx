@@ -50,7 +50,7 @@ const App = () => {
     };
 
     const cerrarSesion = () => {
-        kc.logout({ redirectUri: 'https://localhost:5174/' });
+        kc.logout({ redirectUri: 'https://localhost:5173/' });
         dispatch(logout());
     };
 
