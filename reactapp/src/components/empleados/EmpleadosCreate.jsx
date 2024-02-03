@@ -111,7 +111,19 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpl
 
     useEffect(() => {
         if (selectedEmpleadoId && empleadoData) { // Checks if empleadoId prop is provided and empleadoData is loaded
-            setNewEmpleado(empleadoData); // Sets the employee data
+            setNewEmpleado({
+                ...empleadoData,
+                companiaId: companias?.find(comp => comp.companiaId === empleadoData.compania.companiaId).companiaId,
+                tipoEmpleadoId: tiposEmpleados?.find(tipo => tipo.tipoEmpleadoId === empleadoData.tipoEmpleado.tipoEmpleadoId).tipoEmpleadoId,
+                tipoContratoId: tiposContratos?.find(tipo => tipo.tipoContratoId === empleadoData.tipoContrato.tipoContratoId).tipoContratoId,
+                ocupacionId: ocupaciones?.find(ocupacion => ocupacion.ocupacionId === empleadoData.ocupacion.ocupacionId).ocupacionId,
+                nivelSalarialId: nivelesSalariales?.find(nivel => nivel.nivelSalarialId === empleadoData.nivelSalarial.nivelSalarialId).nivelSalarialId,
+                tipoComisionId: tiposComisiones?.find(tipo => tipo.tipoComisionId === empleadoData.tipoComision.tipoComisionId).tipoComisionId,
+                centroCostosId: centrosDeCostos?.find(centro => centro.centroCostoId === empleadoData.centroCostos.centroCostoId).centroCostoId,
+                bancoId: bancos?.find(banco => banco.bancoId === empleadoData.banco.bancoId).bancoId,
+                tipoCuentaId: tiposCuentas?.find(tipo => tipo.tipoCuentaId === empleadoData.tipoCuenta.tipoCuentaId).tipoCuentaId,
+                fondoReservaId: fondosReservas?.find(fondo => fondo.fondoReservaId === empleadoData.fondoReserva.fondoReservaId).fondoReservaId
+            }); // Sets the employee data
 
             setSelectedCompania(companias?.find(comp => comp.companiaId === empleadoData.compania.companiaId));
             setSelectedTipoEmpleado(tiposEmpleados?.find(tipo => tipo.tipoEmpleadoId === empleadoData.tipoEmpleado.tipoEmpleadoId));
@@ -125,8 +137,12 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpl
             setSelectedFondoReserva(fondosReservas?.find(fondo => fondo.fondoReservaId === empleadoData.fondoReserva.fondoReservaId));
             setSelectedReingreso(reingresoOptions?.find(op => op.value === empleadoData.reingreso)); // Pendiente
         }
-    }, [newEmpleado, selectedEmpleadoId, empleadoData, companias, tiposEmpleados, tiposContratos, ocupaciones, nivelesSalariales, tiposComisiones, centrosDeCostos, bancos, tiposCuentas, fondosReservas]);
+    }, [/*newEmpleado*/, selectedEmpleadoId, empleadoData, companias, tiposEmpleados, tiposContratos, ocupaciones, nivelesSalariales, tiposComisiones, centrosDeCostos, bancos, tiposCuentas, fondosReservas]);
 
+    useEffect(() => {
+        console.log(newEmpleado);
+        console.log(selectedReingreso);
+    }, [newEmpleado])
     // ------------------ Dropdowns normales ---------------------------------------
     const refreshData = (e) => {
         e.preventDefault();
@@ -289,18 +305,48 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpl
         try {
             setIsLoading2(true);
 
-            const response = await updateObject(newEmpleado);
+            const newEmpleadoFinal = {
+                "companiaId": newEmpleado.companiaId,
+                "tipoEmpleadoId": newEmpleado.tipoEmpleadoId,
+                "apellidoPaterno": newEmpleado.apellidoPaterno,
+                "apellidoMaterno": newEmpleado.apellidoMaterno,
+                "nombres": newEmpleado.nombres,
+                "sexo": newEmpleado.sexo,
+                "numeroCedula": newEmpleado.numeroCedula,
+                "direccion": newEmpleado.direccion,
+                "telefono1": newEmpleado.telefono1,
+                "telefono2": newEmpleado.telefono2,
+                "tipoContratoId": newEmpleado.tipoContratoId,
+                "carnetIess": newEmpleado.carnetIess,
+                "ocupacionId": newEmpleado.ocupacionId,
+                "nivelSalarialId": newEmpleado.nivelSalarialId,
+                "tipoComisionId": newEmpleado.tipoComisionId,
+                "centroCostosId": newEmpleado.centroCostosId,
+                "fechaNacimiento": newEmpleado.fechaNacimiento,
+                "fechaIngreso": newEmpleado.fechaIngreso,
+                "cuentaBancaria": newEmpleado.cuentaBancaria,
+                "bancoId": newEmpleado.bancoId,
+                "tipoCuentaId": newEmpleado.tipoCuentaId,
+                "bonificacion": newEmpleado.bonificacion,
+                "sueldoBase": newEmpleado.sueldoBase,
+                "fondoReservaId": newEmpleado.fondoReservaId,
+                "reingreso": newEmpleado.reingreso,
+                "fechaReingreso": newEmpleado.fechaReingreso,
+                "formaCalculo13": newEmpleado.formaCalculo13,
+                "formaCalculo14": newEmpleado.formaCalculo14,
+            }
+
+            const response = await updateObject(selectedEmpleadoId, newEmpleadoFinal);
             status = response.status;
             data = response.data;
 
-            if (status === 201) {
+            if (status === 204) {
                 toast.current.show({
                     severity: 'success',
                     summary: 'Proceso exitoso',
                     detail: `Registro editado con éxito`, // EDITABLE
                     sticky: true,
                 });
-                resetStates();
                 onEdited();
             } else {
                 throw new Error(`Error en la edición`);
@@ -386,7 +432,7 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpl
                                         </div>
                                         <div className="form-group form-group-double">
                                             <label> Fecha de nacimiento <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.fechaNacimiento && 'form-group-empty'}`} type="date" name="fechaNacimiento" value={newEmpleado.fechaNacimiento || ''} onChange={handleInputChange} required />
+                                            <input className={`${requiredFields.fechaNacimiento && 'form-group-empty'}`} type="date" name="fechaNacimiento" value={selectedEmpleadoId ? (newEmpleado?.fechaNacimiento && newEmpleado?.fechaNacimiento.split('T')[0]) : newEmpleado.fechaNacimiento || ''} onChange={handleInputChange} required />
                                         </div>
                                         <div className="form-group">
                                             <label> Sexo <small className="requiredAsterisk">(Obligatorio)</small></label>
@@ -721,7 +767,7 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpl
                                         </div>
                                         <div className="form-group">
                                             <label> Fecha de ingreso <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.fechaIngreso && 'form-group-empty'}`} type="date" name="fechaIngreso" value={newEmpleado.fechaIngreso || ''} onChange={handleInputChange} required />
+                                            <input className={`${requiredFields.fechaIngreso && 'form-group-empty'}`} type="date" name="fechaIngreso" value={selectedEmpleadoId ? (newEmpleado?.fechaIngreso && newEmpleado?.fechaIngreso.split('T')[0]) : newEmpleado.fechaIngreso || ''} onChange={handleInputChange} required />
                                         </div>
                                         <div className="form-group">
                                             <label> Reingreso <small className="requiredAsterisk">(Obligatorio)</small></label>
@@ -752,7 +798,7 @@ function EmpleadosCreate({ onClose, onCreated, onEdited, onDeleted, selectedEmpl
                                         </div>
                                         <div className="form-group">
                                             <label> Fecha de reingreso <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.fechaReingreso && 'form-group-empty'}`} type="date" name="fechaReingreso" value={newEmpleado.fechaReingreso || ''} onChange={handleInputChange} required />
+                                            <input className={`${requiredFields.fechaReingreso && 'form-group-empty'}`} type="date" name="fechaReingreso" value={selectedEmpleadoId ? (newEmpleado?.fechaReingreso && newEmpleado?.fechaReingreso.split('T')[0]) : newEmpleado.fechaReingreso || ''} onChange={handleInputChange} required />
                                         </div>
                                     </div>
                                 </section>

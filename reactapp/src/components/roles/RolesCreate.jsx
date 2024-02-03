@@ -6,15 +6,18 @@ import { Dropdown } from 'primereact/dropdown';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 import useSWR from 'swr';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 // Servicios
 import { useGestionService } from '../../services/useGestionService';
-import { useMovimientos } from '../../services/useMovimientos';
+import { useUsuarios } from '../../services/useUsuarios';
+import { useRoles } from '../../services/useRoles';
 
 // Auth
 const apiEndpoint = import.meta.env.VITE_MAIN_ENDPOINT;
 
-function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMovimientoId }) { //EDITABLE
+function RolesCreate({ onClose, onCreated, onEdited, onDeleted, selectedRolPagoId }) { //EDITABLE
 
     const fetcher = async (url) => {
         const res = await fetch(url, {
@@ -35,59 +38,49 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
 
     // --------------- Setup (Servicios, Contextos, Referencias) -----------------------------------
 
-    const { createObject, updateObject, deleteObject } = useMovimientos(); // Servicio necesario para crear el objeto
+    const { createObject, updateObject, deleteObject } = useRoles(); // Servicio necesario para crear el objeto
     const toast = useRef(null); // Referencia para el toast
 
-    const { data: movimientoData } = useSWR(`${apiEndpoint}/MovimientosPlanilla/${selectedMovimientoId}`, fetcher); 
+    const { data: rolPagoData } = useSWR(`${apiEndpoint}/RolPago/${selectedRolPagoId}`, fetcher); 
     const { data: companias, error, isLoading, isValidating, refresh } = useGestionService('Compania');
-    const { data: empleados } = useGestionService('Empleado');
-    const { data: conceptos } = useGestionService('Concepto');
-    const { data: tiposOperaciones } = useGestionService('TipoOperacion');
+    const { data: usuarios } = useUsuarios();
     
     // --------------- Estados que no requieren persistencia --------------------------------------------
 
     const [isLoading2, setIsLoading2] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false); // Para los dropdowns
-    const defaultNewMovimiento = {}; 
+    const defaultNewRolPago = {}; 
     const defaultRequiredFields = {
         companiaId: false,
-        empleadoId: false,
-        conceptoId: false,
-        ano: false,
-        mes: false,
-        importe: false,
-        tipoOperacionId: false,
+        anoGeneracion: false,
+        mesGeneracion: false,
+        usuarioId: false,
+        fechaCreacion: false
     };
  
     // --------------- Estados que requieren persistencia --------------------------------------------
 
     const [selectedCompania, setSelectedCompania] = useState(null);
-    const [selectedEmpleado, setSelectedEmpleado] = useState(null);
-    const [selectedConcepto, setSelectedConcepto] = useState(null);
-    const [selectedTipoOperacion, setSelectedTipoOperacion] = useState(null);
+    const [selectedUsuario, setSelectedUsuario] = useState(null);
 
     // Lógica general
-    const [newMovimiento, setNewMovimiento] = useState(defaultNewMovimiento);// mapea el objeto: ESPECIFICO
+    const [newRolPago, setNewRolPago] = useState(defaultNewRolPago);// mapea el objeto: ESPECIFICO
     const [isAnyEmpty, setisAnyEmpty] = useState(false); //Saber si hay campos vacíos: GENERAL
     const [requiredFields, setRequiredFields] = useState(defaultRequiredFields); // mapea los inputs requeridos: GENERAL
     const [activeIndex, setActiveIndex] = useState(0); // Conoce el indice de tab activo para el tabview
 
     useEffect(() => {
-        if (selectedMovimientoId && movimientoData) { // Checks if empleadoId prop is provided and movimientoData is loaded
-            setNewMovimiento({
-                ...movimientoData,
-                companiaId: companias?.find(comp => comp.companiaId === movimientoData.compania.companiaId).companiaId,
-                empleadoId: empleados?.find(emp => emp.empleadoId === movimientoData.empleado.empleadoId).empleadoId,
-                conceptoId: conceptos?.find(con => con.conceptoId === movimientoData.concepto.conceptoId).conceptoId,
-                tipoOperacionId: tiposOperaciones?.find(tipo => tipo.tipoOperacionId === movimientoData.tipoOperacion.tipoOperacionId).tipoOperacionId,
+        if (selectedRolPagoId && rolPagoData) { // Checks if empleadoId prop is provided and rolPagoData is loaded
+            setNewRolPago({
+                ...rolPagoData,
+                usuarioId: usuarios?.find(usu => usu.correoElectronico === rolPagoData.usuario.correoElectronico).usuarioId,
+                companiaId: companias?.find(comp => comp.companiaId === rolPagoData.compania.companiaId).companiaId
             }); // Sets the employee data
 
-            setSelectedCompania(companias?.find(comp => comp.companiaId === movimientoData.compania.companiaId));
-            setSelectedEmpleado(empleados?.find(emp => emp.empleadoId === movimientoData.empleado.empleadoId));
-            setSelectedConcepto(conceptos?.find(con => con.conceptoId === movimientoData.concepto.conceptoId));
-            setSelectedTipoOperacion(tiposOperaciones?.find(tipo => tipo.tipoOperacionId === movimientoData.tipoOperacion.tipoOperacionId));
+            setSelectedCompania(companias?.find(comp => comp.companiaId === rolPagoData.compania.companiaId));
+            setSelectedUsuario(usuarios?.find(usu => usu.correoElectronico === rolPagoData.usuario.correoElectronico));
         }
-    }, [/*newMovimiento*/, selectedMovimientoId, movimientoData, companias, empleados, conceptos, tiposOperaciones]);
+    }, [/*newRolPago*/, selectedRolPagoId, rolPagoData, companias, usuarios]);
 
     // ------------------ Dropdowns normales ---------------------------------------
     const refreshData = (e) => {
@@ -122,19 +115,19 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
         return <span>{props.placeholder}</span>;
     }; //EDITABLE: template para mostrar el valor seleccionado de un dropdown
 
-    const optionTemplateE = (option) => {
+    const optionTemplateU = (option) => {
         return (
             <div className="dropdown-item-container">
-                <span>{option.nombres} {option.apellidoPaterno} {option.apellidoMaterno}</span>
+                <span>{option.nombre} ({option.correoElectronico})</span>
             </div>
         );
     }; // EDITABLE: template para mostrar las opciones de un dropdown
 
-    const selectedValueTemplateE = (option, props) => {
+    const selectedValueTemplateU = (option, props) => {
         if (option) {
             return (
                 <div className="dropdown-item-container">
-                    <span>{option.nombres} {option.apellidoPaterno} {option.apellidoMaterno}</span>
+                    <span>{option.nombre} ({option.correoElectronico})</span>
                 </div>
             );
         }
@@ -150,7 +143,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
             updatedRequiredFields[name] = false;
             setRequiredFields(updatedRequiredFields);
         } // Check if the input name is a key in the requiredFields
-        setNewMovimiento(prev => ({ ...prev, [name]: inputValue })); // Update the newCliente state with the new value for text inputs
+        setNewRolPago(prev => ({ ...prev, [name]: inputValue })); // Update the newCliente state with the new value for text inputs
     }; // Maneja el cambio para un tag de input
 
     const isEmptyValue = value => {
@@ -183,7 +176,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
     const handleDelete = async (e) => {
         try {
             setIsLoading2(true);
-            const response = await deleteObject(selectedMovimientoId);
+            const response = await deleteObject(selectedRolPagoId);
             if (response.status === 204) {
                 onDeleted()
                 onClose();
@@ -204,7 +197,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
         e.preventDefault();
 
         // Verificar si existe algun campo requerido vacío
-        const anyFieldEmpty = validateRequiredFields(newMovimiento);
+        const anyFieldEmpty = validateRequiredFields(newRolPago);
         console.log('Valores vacíos');
 
         if (anyFieldEmpty) {
@@ -221,7 +214,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
         try {
             setIsLoading2(true);
 
-            const response = await createObject(newMovimiento); 
+            const response = await createObject(newRolPago); 
             status = response.status;
             data = response.data;
 
@@ -255,7 +248,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
         e.preventDefault();
 
         // Verificar si existe algun campo requerido vacío
-        const anyFieldEmpty = validateRequiredFields(newMovimiento);
+        const anyFieldEmpty = validateRequiredFields(newRolPago);
 
         if (anyFieldEmpty) {
             setisAnyEmpty(true);
@@ -271,17 +264,15 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
         try {
             setIsLoading2(true);
 
-            const newMovimientoFinal = {
-                "companiaId": newMovimiento.companiaId,
-                "empleadoId": newMovimiento.empleadoId,
-                "conceptoId": newMovimiento.conceptoId,
-                "ano": newMovimiento.ano,
-                "mes": newMovimiento.mes,
-                "importe": newMovimiento.importe,
-                "tipoOperacionId": newMovimiento.tipoOperacionId,
+            const newRolPagoFinal = {
+                companiaId: newRolPago.compania.companiaId,
+                anoGeneracion: newRolPago.anoGeneracion,
+                mesGeneracion: newRolPago.mesGeneracion,
+                usuarioId: newRolPago.usuarioId,
+                fechaCreacion: newRolPago.fechaCreacion
             }
 
-            const response = await updateObject(selectedMovimientoId,newMovimientoFinal);
+            const response = await updateObject(selectedRolPagoId, newRolPagoFinal);
             status = response.status;
             data = response.data;
 
@@ -312,12 +303,10 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
 
     const resetStates = () => {
         setSelectedCompania(null);
-        setSelectedConcepto(null);
-        setSelectedEmpleado(null);
-        setSelectedTipoOperacion(null);
+        setSelectedUsuario(null);
 
         // Lógica general
-        setNewMovimiento(defaultNewMovimiento);
+        setNewRolPago(defaultNewRolPago);
         setisAnyEmpty(false);
         setRequiredFields(defaultRequiredFields);
         setActiveIndex(0);
@@ -329,6 +318,53 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
 
     // -----------------------------------------------------------------------------------------------
 
+    const handleGeneratePDF = () => {
+        const anyFieldEmpty = validateRequiredFields(newRolPago);
+        if (anyFieldEmpty) {
+            toast.current.show({
+                severity: 'warn',
+                summary: 'Campos requeridos',
+                detail: 'Por favor, complete todos los campos requeridos antes de generar el PDF.',
+                life: 3000,
+            });
+            return;
+        }
+
+        const doc = new jsPDF();
+        const tableColumn = ["Campo", "Valor"];
+        const tableRows = [];
+
+        // Define a table body
+        const payrollData = [
+            ["Compañía", selectedCompania ? selectedCompania.nombre : ''],
+            ["Usuario", selectedUsuario ? `${selectedUsuario.nombre} (${selectedUsuario.correoElectronico})` : ''],
+            ["Año", newRolPago.anoGeneracion || ''],
+            ["Mes", newRolPago.mesGeneracion || ''],
+            ["Fecha de Creación", newRolPago.fechaCreacion ? new Date(newRolPago.fechaCreacion).toLocaleDateString() : '']
+        ];
+
+        payrollData.forEach(data => {
+            tableRows.push(data);
+        });
+
+        doc.autoTable(tableColumn, tableRows, { startY: 20 });
+
+        const dateStr = new Date().toLocaleDateString();
+        doc.text(`Rol de Pagos generado el: ${dateStr}`, 14, 15);
+
+        // Improve the layout for the signature line
+        let signatureYPosition = doc.lastAutoTable.finalY + 20; // Y position for the signature line
+        doc.text("Firma:", 14, signatureYPosition);
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(10);
+        doc.text(selectedUsuario ? selectedUsuario.nombre : '', 20, signatureYPosition + 10); // Set the name below the line
+        doc.line(20, signatureYPosition + 5, 80, signatureYPosition + 5); // Signature line above the name
+
+        // Save the PDF
+        doc.save(`RolDePagos_${dateStr}.pdf`);
+    };
+
+
     return (
         <>
             <Draggable cancel="input, button, textarea, table" bounds="parent">
@@ -339,7 +375,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                         </div>
                     }
                     <section className="form-header">
-                        <span>{ selectedMovimientoId ? 'Editar movimiento de planilla' : 'Nuevo movimiento de planilla' }</span> 
+                        <span>{ selectedRolPagoId ? 'Editar rol de pagos' : 'Nuevo rol de pagos' }</span> 
                         <div className="form-header-buttons">
                             <Button className="form-header-btn" onClick={handleCancel}>
                                 <i className="pi pi-times" style={{ fontSize: '0.6rem', color: 'var(--secondary-blue)', fontWeight: '600' }}></i>
@@ -348,55 +384,14 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                     </section>
                
                     <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                        <TabPanel header="Movimiento de planilla" leftIcon="pi pi-arrow-right-arrow-left mr-2">
+                        <TabPanel header="Rol de pagos" leftIcon="pi pi-money-bill mr-2">
                             <div className="form-body form-body--create">
                                 <section>
                                     <div className="form-group-label">
                                         <i className="pi pi-info-circle"></i>
-                                        <label>Información del movimiento</label>
+                                        <label>Información del rol</label>
                                     </div>
                                     <div className="form-body-group">
-                                        <div className="form-group form-group-double">
-                                            <label> Tipo de operación <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <div>
-                                                {
-                                                    error || !tiposOperaciones ? (
-                                                        <div className="dropdown-error">
-                                                            <div className="dropdown-error-msg">
-                                                                {isLoading || (isRefreshing && isValidating) ?
-                                                                    <div className="small-spinner" /> :
-                                                                    <span>Ocurrió un error: sin opciones disponibles</span>}
-                                                            </div>
-                                                            <Button className="rounded-icon-btn" onClick={refreshData}>
-                                                                <i className="pi pi-refresh" style={{ fontSize: '0.8rem', margin: '0' }}></i>
-                                                            </Button>
-                                                        </div>
-                                                    ) : (
-                                                        <Dropdown
-                                                            className={`${requiredFields.tipoOperacionId && 'form-group-empty'}`}
-                                                            style={{ width: '100%' }}
-                                                            value={selectedTipoOperacion}
-                                                            onChange={(e) => {
-                                                                setSelectedTipoOperacion(e.value);
-                                                                if (e.value && e.value.tipoOperacionId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
-                                                                        ...prevState,
-                                                                        tipoOperacionId: e.value.tipoOperacionId
-                                                                    }));
-                                                                }
-                                                            }}
-                                                            options={tiposOperaciones}
-                                                            optionLabel="nombre"
-                                                            placeholder="Selecciona un tipo de operación"
-                                                            filter
-                                                            virtualScrollerOptions={{ itemSize: 38 }}
-                                                            valueTemplate={selectedValueTemplate}
-                                                            itemTemplate={optionTemplate}
-                                                        />
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
                                         <div className="form-group form-group-double">
                                             <label> Compañía <small className="requiredAsterisk">(Obligatorio)</small></label>
                                             <div>
@@ -420,7 +415,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                                                             onChange={(e) => {
                                                                 setSelectedCompania(e.value);
                                                                 if (e.value && e.value.companiaId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
+                                                                    setNewRolPago(prevState => ({
                                                                         ...prevState,
                                                                         companiaId: e.value.companiaId
                                                                     }));
@@ -439,10 +434,10 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                                             </div>
                                         </div>
                                         <div className="form-group form-group-double">
-                                            <label> Trabajador <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <label> Usuario <small className="requiredAsterisk">(Obligatorio)</small></label>
                                             <div>
                                                 {
-                                                    error || !empleados ? (
+                                                    error || !usuarios ? (
                                                         <div className="dropdown-error">
                                                             <div className="dropdown-error-msg">
                                                                 {isLoading || (isRefreshing && isValidating) ?
@@ -455,67 +450,26 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                                                         </div>
                                                     ) : (
                                                         <Dropdown
-                                                            className={`${requiredFields.empleadoId && 'form-group-empty'}`}
+                                                            className={`${requiredFields.usuarioId && 'form-group-empty'}`}
                                                             style={{ width: '100%' }}
-                                                            value={selectedEmpleado}
+                                                            value={selectedUsuario}
                                                             onChange={(e) => {
-                                                                setSelectedEmpleado(e.value);
-                                                                if (e.value && e.value.empleadoId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
+                                                                setSelectedUsuario(e.value);
+                                                                if (e.value && e.value.usuarioId !== undefined) {
+                                                                    setNewRolPago(prevState => ({
                                                                         ...prevState,
-                                                                        empleadoId: e.value.empleadoId
+                                                                        usuarioId: e.value.usuarioId
                                                                     }));
                                                                 }
                                                             }}
-                                                            options={empleados}
-                                                            optionLabel="nombres"
-                                                            placeholder="Selecciona un trabajador"
-                                                            filter
-                                                            filterBy="nombres,apellidoMaterno,apellidoPaterno"
-                                                            virtualScrollerOptions={{ itemSize: 38 }}
-                                                            valueTemplate={selectedValueTemplateE}
-                                                            itemTemplate={optionTemplateE}
-                                                        />
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className="form-group form-group-double">
-                                            <label> Concepto <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <div>
-                                                {
-                                                    error || !conceptos ? (
-                                                        <div className="dropdown-error">
-                                                            <div className="dropdown-error-msg">
-                                                                {isLoading || (isRefreshing && isValidating) ?
-                                                                    <div className="small-spinner" /> :
-                                                                    <span>Ocurrió un error: sin opciones disponibles</span>}
-                                                            </div>
-                                                            <Button className="rounded-icon-btn" onClick={refreshData}>
-                                                                <i className="pi pi-refresh" style={{ fontSize: '0.8rem', margin: '0' }}></i>
-                                                            </Button>
-                                                        </div>
-                                                    ) : (
-                                                        <Dropdown
-                                                            className={`${requiredFields.conceptoId && 'form-group-empty'}`}
-                                                            style={{ width: '100%' }}
-                                                            value={selectedConcepto}
-                                                            onChange={(e) => {
-                                                                setSelectedConcepto(e.value);
-                                                                if (e.value && e.value.conceptoId !== undefined) {
-                                                                    setNewMovimiento(prevState => ({
-                                                                        ...prevState,
-                                                                        conceptoId: e.value.conceptoId
-                                                                    }));
-                                                                }
-                                                            }}
-                                                            options={conceptos}
+                                                            options={usuarios}
                                                             optionLabel="nombre"
-                                                            placeholder="Selecciona un concepto"
+                                                            placeholder="Selecciona un usuario"
                                                             filter
+                                                            filterBy="nombre,correoElectronico"
                                                             virtualScrollerOptions={{ itemSize: 38 }}
-                                                            valueTemplate={selectedValueTemplate}
-                                                            itemTemplate={optionTemplate}
+                                                            valueTemplate={selectedValueTemplateU}
+                                                            itemTemplate={optionTemplateU}
                                                         />
                                                     )
                                                 }
@@ -523,15 +477,15 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                                         </div>
                                         <div className="form-group">
                                             <label> Año <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.ano && 'form-group-empty'}`} type="number" name="ano" value={newMovimiento.ano || ''} onChange={handleInputChange}  />
+                                            <input className={`${requiredFields.anoGeneracion && 'form-group-empty'}`} type="number" name="anoGeneracion" value={newRolPago.anoGeneracion || ''} onChange={handleInputChange}  />
                                         </div> 
                                         <div className="form-group">
                                             <label> Mes <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.mes && 'form-group-empty'}`} type="number" name="mes" value={newMovimiento.mes || ''} onChange={handleInputChange} />
+                                            <input className={`${requiredFields.mesGeneracion && 'form-group-empty'}`} type="number" name="mesGeneracion" value={newRolPago.mesGeneracion || ''} onChange={handleInputChange} />
                                         </div> 
                                         <div className="form-group">
-                                            <label> Importe <small className="requiredAsterisk">(Obligatorio)</small></label>
-                                            <input className={`${requiredFields.importe && 'form-group-empty'}`} type="number" name="importe" value={newMovimiento.importe || ''} onChange={handleInputChange} />
+                                            <label> Fecha de creación <small className="requiredAsterisk">(Obligatorio)</small></label>
+                                            <input className={`${requiredFields.fechaCreacion && 'form-group-empty'}`} type="date" name="fechaCreacion" value={selectedRolPagoId ? (newRolPago?.fechaCreacion && newRolPago?.fechaCreacion.split('T')[0]) : newRolPago.fechaCreacion || ''} onChange={handleInputChange} />
                                         </div> 
                                     </div>
                                 </section>
@@ -543,6 +497,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                     </div>
                     <section className="form-footer">
                         <button className="form-cancel-btn" onClick={handleCancel}>Cancelar</button>
+                        <button className="form-accept-btn" onClick={handleGeneratePDF} disabled={isAnyEmpty}>Generar PDF</button>
                         {isAnyEmpty &&
                             <div className="empty-fields-msg">
                                 <i className="pi pi-exclamation-circle" style={{ fontSize: '0.8rem', margin: '0', color: 'var(--secondary-blue)', fontWeight: '600' }}></i>
@@ -550,7 +505,7 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
                             </div>
                         }
                         {
-                            selectedMovimientoId ? 
+                            selectedRolPagoId ? 
                             <div>
                                 <button style={{marginRight: '5px'}} onClick={confirmDeletion} className="form-delete-btn">Eliminar</button>
                                 <button type="submit" className="form-accept-btn" onClick={handleEdit}>Editar</button>
@@ -568,4 +523,4 @@ function MovimientosCreate({ onClose, onCreated, onEdited, onDeleted, selectedMo
     );
 }
 
-export default MovimientosCreate;
+export default RolesCreate;

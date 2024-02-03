@@ -1,11 +1,11 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import UsuariosTable from './UsuariosTable';
-import UsuariosCreate from './UsuariosCreate';
+import RolesTable from './RolesTable';
+import RolesCreate from './RolesCreate';
 
 
-function UsuariosPage() {
+function RolesPage() {
 
     // --------------- Setup (Servicios, Contextos, Referencias) -----------------------------------
 
@@ -48,7 +48,7 @@ function UsuariosPage() {
         <>
             <Toast ref={toast} />
             <div className="page-container">
-                <h5 className="page-title">Usuarios del sistema</h5>
+                <h5 className="page-title">Roles de pagos</h5>
                 <div className="page-options">
                     <button className="btn-page-options" onClick={toggleCreate}>
                         <i className="pi pi-plus" style={{ fontSize: '0.8rem', margin: '0' }}></i>
@@ -56,13 +56,13 @@ function UsuariosPage() {
                     </button>
                 </div>
                 <div className="page-table">
-                    <UsuariosTable onClose={() => setIsViewing(false)} onSelect={(usuarioId) => { setIsViewing(true); setIdSelected(usuarioId); }} />
+                    <RolesTable onClose={() => setIsViewing(false)} onSelect={(rolPagoId) => { setIsViewing(true); setIdSelected(rolPagoId); }} />
                 </div>
             </div>
-            {isCreating && <UsuariosCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
-            {isViewing && <UsuariosCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedUsuarioId={idSelected} />}
+            {isCreating && <RolesCreate onCreated={onCreated} onClose={() => setIsCreating(false)} />}
+            {isViewing && <RolesCreate onEdited={onEdited} onDeleted={onDeleted} onClose={() => setIsViewing(false)} selectedRolPagoId={idSelected} />}
         </>
     );
 }
 
-export default UsuariosPage;
+export default RolesPage;

@@ -25,6 +25,7 @@ import LoginPage from './components/loginPageComponents/LoginPage';
 import EmpleadosPage from './components/empleados/EmpleadosPage';
 import MovimientosPage from './components/movimientos/MovimientosPage';
 import UsuariosPage from './components/usuarios/UsuariosPage';
+import RolesPage from './components/roles/RolesPage';
 
 const App = () => {
 
@@ -101,6 +102,7 @@ const App = () => {
                                             {pages['Trabajadores'] && <EmpleadosPage />}
                                             {pages['Movimientos de planilla'] && <MovimientosPage />}
                                             {pages['Usuarios'] && <UsuariosPage />}
+                                            {pages['Rol de pagos'] && <RolesPage />}
                                         </>
                                     )}
                                 </div>
