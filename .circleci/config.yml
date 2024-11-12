@@ -13,21 +13,6 @@ jobs:
           name: Enviar correo de inicio
           command: cd reactapp && node scripts/begin_workflow.js
 
-  build:
-    docker:
-      - image: cimg/node:14.17
-    steps:
-      - checkout
-      - run:
-          name: Instalar dependencias
-          command: cd reactapp && npm install
-      - run:
-          name: Construir la aplicación
-          command: cd reactapp && npm run build
-      - run:
-          name: Enviar correo de build
-          command: cd reactapp && node scripts/begin_build.js     
-
   test:
     docker:
       - image: cimg/node:14.17
@@ -44,6 +29,21 @@ jobs:
       - run:
           name: Enviar correo de testing
           command: cd reactapp && node scripts/begin_testing.js  
+
+  build:
+    docker:
+      - image: cimg/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependencias
+          command: cd reactapp && npm install
+      - run:
+          name: Construir la aplicación
+          command: cd reactapp && npm run build
+      - run:
+          name: Enviar correo de build
+          command: cd reactapp && node scripts/begin_build.js     
 
 
   deploy:
