@@ -1,0 +1,104 @@
+version: 2.1
+
+jobs:
+  send_start_email:
+    docker:
+      - image: cimg/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependencias de correo
+          command: npm install nodemailer
+      - run:
+          name: Enviar correo de inicio
+          command: node scripts/send_start_email.js
+
+  build:
+    docker:
+      - image: cimg/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependencias
+          command: npm install
+      - run:
+          name: Construir la aplicación
+          command: npm run build
+
+  test:
+    docker:
+      - image: cimg/node:14.17
+    parallelism: 4
+    steps:
+      - checkout
+      - run:
+          name: Ejecutar pruebas en paralelo
+          command: |
+            npm install
+            # Dividir las pruebas usando una herramienta adecuada
+            npm run test -- --shard $(CIRCLE_NODE_INDEX) --shards $(CIRCLE_NODE_TOTAL)
+
+  deploy:
+    docker:
+      - image: cimg/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Desplegar la aplicación
+          command: echo "Desplegando la aplicación..."
+      # Pasos de notificación en caso de éxito
+      - run:
+          name: Instalar dependencias de correo (éxito)
+          command: npm install nodemailer
+          when: on_success
+      - run:
+          name: Enviar correo de éxito
+          command: node scripts/notify_success.js
+          when: on_success
+      # Pasos de notificación en caso de fallo
+      - run:
+          name: Instalar dependencias de correo (fallo)
+          command: npm install nodemailer
+          when: on_fail
+      - run:
+          name: Enviar correo de fallo
+          command: node scripts/notify_failure.js
+          when: on_fail
+
+  notify_pull_request:
+    docker:
+      - image: cimg/node:14.17
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependencias de correo
+          command: npm install nodemailer
+      - run:
+          name: Enviar cnotificación de Pull Request
+          command: node scripts/send_pull_notification.js
+
+workflows:
+  version: 2
+
+  workflow_build_and_deploy:
+    jobs:
+      - send_start_email:
+          filters:
+              branches:
+                only: main
+      - build:
+          requires:
+            - send_start_email
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+
+  workflow_pull_request:
+    jobs:
+      - notify_pull_request:
+          filters:
+            branches:
+              ignore: main
