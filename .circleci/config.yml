@@ -83,15 +83,15 @@ workflows:
           filters:
               branches:
                 only: main
-      - build:
-          requires:
-            - begin_workflow
       - test:
           requires:
-            - build
-      - deploy:
+            - begin_workflow
+      - build:
           requires:
             - test
+      - deploy:
+          requires:
+            - build
 
   second_workflow:
     jobs:
